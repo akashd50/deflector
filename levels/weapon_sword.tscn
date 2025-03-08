@@ -1,8 +1,8 @@
 [gd_scene load_steps=9 format=3 uid="uid://b6t6eufj0ge8"]
 
 [ext_resource type="Texture2D" uid="uid://dr25n08h7vj5n" path="res://assets/great-sword.png" id="1_2qqmi"]
-[ext_resource type="Script" path="res://levels/weapon_sword.gd" id="1_24py7"]
-[ext_resource type="Script" path="res://scripts/hit_box.gd" id="3_d8pdr"]
+[ext_resource type="Script" uid="uid://vtd3xy4yypix" path="res://levels/WeaponSword.cs" id="1_llx7q"]
+[ext_resource type="Script" uid="uid://3r03sui47g0q" path="res://scripts/HitBox.cs" id="3_llx7q"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tjyvl"]
 radius = 65.493
@@ -81,13 +81,13 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ffoiq"]
 _data = {
-"RESET": SubResource("Animation_qxfhk"),
-"slash-1": SubResource("Animation_ppmmg"),
-"slash-2": SubResource("Animation_3127v")
+&"RESET": SubResource("Animation_qxfhk"),
+&"slash-1": SubResource("Animation_ppmmg"),
+&"slash-2": SubResource("Animation_3127v")
 }
 
 [node name="WeaponSword" type="Node2D"]
-script = ExtResource("1_24py7")
+script = ExtResource("1_llx7q")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 rotation = 3.38048
@@ -96,7 +96,7 @@ texture = ExtResource("1_2qqmi")
 offset = Vector2(280, 2)
 
 [node name="Hitbox" type="Area2D" parent="Sprite"]
-script = ExtResource("3_d8pdr")
+script = ExtResource("3_llx7q")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/Hitbox"]
 position = Vector2(488.196, -1.95752)
@@ -106,7 +106,7 @@ disabled = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_ffoiq")
+&"": SubResource("AnimationLibrary_ffoiq")
 }
 
 [node name="Timer" type="Timer" parent="."]
