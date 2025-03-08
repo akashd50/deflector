@@ -3,21 +3,20 @@ using Godot;
 
 namespace Deflector.levels.Mobs;
 
-public partial class Mob1: CharacterBody2D, ICharacterWithHp
+public partial class Mob1: MobBehavior, ICharacterWithHp
 {
-	private MobBehavior _behavior;
 	public override void _Ready()
 	{
 		var playerNode = GetTree().GetFirstNodeInGroup("player");
 		if (playerNode is Player.Player player)
 		{
-			_behavior = new MobBehavior(this, player);
+			Init(player);
 		}
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		_behavior?.Loop();
+		Loop();
 	}
 
 	public void TakeDamage(int damage)

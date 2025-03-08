@@ -1,38 +1,29 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Deflector.levels.Shared;
 using Godot;
 
 namespace Deflector.levels.Mobs;
 
-public class MobBehavior
+public partial class MobBehavior: CharacterBody2D
 {
-	private enum MobState
-	{
-		Idle,
-		GoingToPlayer,
-		Attacking,
-	}
-
 	private const int DetectionRange = 800;
 	private const int VisibleConeAngle = 45;
 	private const int WalkSpeed = 100;
 	private const int AttackRange = 150;
 
-	private MobState _state;
-	private readonly Player.Player _player;
-	private readonly Mob1 _actor;
-	private readonly Dictionary<MobState, StateInfo> _stateMap;
-	
-	public MobBehavior(Mob1 actor, Player.Player player)
+	private State _state;
+	private Player.Player _player;
+	private Dictionary<State, StateInfo> _stateMap;
+
+	protected void Init(Player.Player player)
 	{
-		_actor = actor;
 		_player = player;
-		_state =  MobState.Idle;
+		_state =  State.Idle;
 		_stateMap = GetStateMap();
 	}
-	
-	public void Loop()
+
+	protected void Loop()
 	{
 		var stateInfo = _stateMap[_state];
 		if (stateInfo.PossibleStates.Length == 0)
@@ -43,12 +34,11 @@ public class MobBehavior
 		var updatedState = false;
 		foreach (var state in stateInfo.PossibleStates)
 		{
-			if (state.Condition())
-			{
-				updatedState = true;
-				_state = state.ToState;
-				break;
-			}
+			if (!state.Condition()) continue;
+
+			updatedState = true;
+			_state = state.ToState;
+			break;
 		}
 
 		if (!updatedState)
@@ -56,7 +46,7 @@ public class MobBehavior
 			stateInfo.Tick?.Invoke();
 		}
 		
-		_actor.MoveAndSlide();
+		MoveAndSlide();
 	}
 
 	private bool ShouldStartGoingToPlayer()
@@ -67,7 +57,7 @@ public class MobBehavior
 		}
 		
 		var toPlayer = ToPlayer();
-		var forward = Vector2.Right.Rotated(_actor.Rotation);
+		var forward = Vector2.Right.Rotated(Rotation);
 		var angleToPlayer = forward.AngleTo(toPlayer.Normalized());
 		if (Math.Abs(angleToPlayer) > double.DegreesToRadians(VisibleConeAngle))
 		{
@@ -82,31 +72,31 @@ public class MobBehavior
 		TrackPlayerIfNeeded();
 		
 		var toPlayer = ToPlayer();
-		var forward = Vector2.Right.Rotated(_actor.Rotation);
+		var forward = Vector2.Right.Rotated(Rotation);
 		if (toPlayer.Length() > AttackRange)
 		{
-			_actor.Velocity = forward * WalkSpeed;
+			Velocity = forward * WalkSpeed;
 			return false;
 		}
 
-		_actor.Velocity = Vector2.Zero;
+		Velocity = Vector2.Zero;
 		return true;
 	}
 	
 	private bool TrackPlayerIfNeeded()
 	{
 		var toPlayer = ToPlayer();
-		var forward = Vector2.Right.Rotated(_actor.Rotation);
+		var forward = Vector2.Right.Rotated(Rotation);
 		var angleToPlayer = forward.AngleTo(toPlayer.Normalized());
 		if (Math.Abs(angleToPlayer) > double.DegreesToRadians(VisibleConeAngle))
 		{
 			if (angleToPlayer > 0)
 			{
-				_actor.Rotate(-angleToPlayer);
+				Rotate(-angleToPlayer);
 			}
 			else
 			{
-				_actor.Rotate(angleToPlayer);
+				Rotate(angleToPlayer);
 			}
 		}
 		return true;
@@ -114,26 +104,26 @@ public class MobBehavior
 
 	private bool AttackPlayer()
 	{
-		_actor.Velocity = Vector2.Zero;
+		Velocity = Vector2.Zero;
 
 		return true;
 	}
 
-	private Dictionary<MobState, StateInfo> GetStateMap()
+	private Dictionary<State, StateInfo> GetStateMap()
 	{
-		return new Dictionary<MobState, StateInfo>
+		return new Dictionary<State, StateInfo>
 		{
-			{MobState.Idle, new StateInfo([
-				new TState(MobState.GoingToPlayer, ShouldStartGoingToPlayer),
-				new TState(MobState.Attacking, IsWithinAttackRange),
+			{State.Idle, new StateInfo([
+				new TState(State.GoingToPlayer, ShouldStartGoingToPlayer),
+				new TState(State.Attacking, IsWithinAttackRange),
 			])},
-			{MobState.GoingToPlayer, new StateInfo([
-				new TState(MobState.Attacking, IsWithinAttackRange),
-				new TState(MobState.Idle, () => !IsWithinDetectionRange()),
+			{State.GoingToPlayer, new StateInfo([
+				new TState(State.Attacking, IsWithinAttackRange),
+				new TState(State.Idle, () => !IsWithinDetectionRange()),
 			], GoToPlayer)},
-			{MobState.Attacking, new StateInfo([
-				new TState(MobState.GoingToPlayer, () => !IsWithinAttackRange()),
-				new TState(MobState.Idle, () => !IsWithinDetectionRange()),
+			{State.Attacking, new StateInfo([
+				new TState(State.GoingToPlayer, () => !IsWithinAttackRange()),
+				new TState(State.Idle, () => !IsWithinDetectionRange()),
 			], AttackPlayer)},
 		};
 	}
@@ -152,9 +142,7 @@ public class MobBehavior
 	
 	private Vector2 ToPlayer()
 	{
-		return _player.GlobalPosition - _actor.GlobalPosition;
+		return _player.GlobalPosition - GlobalPosition;
 	}
 
-	private record StateInfo(TState[] PossibleStates, Func<bool>? Tick = null);
-	private record TState(MobState ToState, Func<bool> Condition);
 }
