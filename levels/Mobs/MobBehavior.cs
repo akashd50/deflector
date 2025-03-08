@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace Deflector.levels.Mobs;
@@ -20,43 +22,44 @@ public class MobBehavior
 	private MobState _state;
 	private readonly Player.Player _player;
 	private readonly Mob1 _actor;
+	private readonly Dictionary<MobState, StateInfo> _stateMap;
 	
 	public MobBehavior(Mob1 actor, Player.Player player)
 	{
 		_actor = actor;
 		_player = player;
+		_state =  MobState.Idle;
+		_stateMap = GetStateMap();
 	}
-
+	
 	public void Loop()
 	{
-		_state = RefreshState();
-		
-		switch (_state)
+		var stateInfo = _stateMap[_state];
+		if (stateInfo.PossibleStates.Length == 0)
 		{
-			case MobState.Idle:
-				if (LookForPlayer())
-				{
-					_state = MobState.GoingToPlayer;
-				}
-				break;
-			case MobState.GoingToPlayer:
-				TrackPlayerIfNeeded();
-				if (GoToPlayer())
-				{
-					_state = MobState.Attacking;
-				}
-				break;
-			case MobState.Attacking:
-
-				break;
-			default:
-				throw new ArgumentOutOfRangeException();
+			stateInfo.Tick?.Invoke();
 		}
 
+		var updatedState = false;
+		foreach (var state in stateInfo.PossibleStates)
+		{
+			if (state.Condition())
+			{
+				updatedState = true;
+				_state = state.ToState;
+				break;
+			}
+		}
+
+		if (!updatedState)
+		{
+			stateInfo.Tick?.Invoke();
+		}
+		
 		_actor.MoveAndSlide();
 	}
 
-	private bool LookForPlayer()
+	private bool ShouldStartGoingToPlayer()
 	{
 		if (!IsWithinDetectionRange())
 		{
@@ -71,6 +74,22 @@ public class MobBehavior
 			return false;
 		}
 		
+		return true;
+	}
+	
+	private bool GoToPlayer()
+	{
+		TrackPlayerIfNeeded();
+		
+		var toPlayer = ToPlayer();
+		var forward = Vector2.Right.Rotated(_actor.Rotation);
+		if (toPlayer.Length() > AttackRange)
+		{
+			_actor.Velocity = forward * WalkSpeed;
+			return false;
+		}
+
+		_actor.Velocity = Vector2.Zero;
 		return true;
 	}
 	
@@ -93,34 +112,30 @@ public class MobBehavior
 		return true;
 	}
 
-	private bool GoToPlayer()
+	private bool AttackPlayer()
 	{
-		var toPlayer = ToPlayer();
-		var forward = Vector2.Right.Rotated(_actor.Rotation);
-		if (toPlayer.Length() > AttackRange)
-		{
-			_actor.Velocity = forward * WalkSpeed;
-			return false;
-		}
-
 		_actor.Velocity = Vector2.Zero;
+
 		return true;
 	}
 
-	private MobState RefreshState()
+	private Dictionary<MobState, StateInfo> GetStateMap()
 	{
-		if (!IsWithinDetectionRange())
+		return new Dictionary<MobState, StateInfo>
 		{
-			return MobState.Idle;
-		}
-
-		if (IsWithinAttackRange())
-		{
-			_actor.Velocity = Vector2.Zero;
-			return MobState.Attacking;
-		}
-
-		return MobState.GoingToPlayer;
+			{MobState.Idle, new StateInfo([
+				new TState(MobState.GoingToPlayer, ShouldStartGoingToPlayer),
+				new TState(MobState.Attacking, IsWithinAttackRange),
+			])},
+			{MobState.GoingToPlayer, new StateInfo([
+				new TState(MobState.Attacking, IsWithinAttackRange),
+				new TState(MobState.Idle, () => !IsWithinDetectionRange()),
+			], GoToPlayer)},
+			{MobState.Attacking, new StateInfo([
+				new TState(MobState.GoingToPlayer, () => !IsWithinAttackRange()),
+				new TState(MobState.Idle, () => !IsWithinDetectionRange()),
+			], AttackPlayer)},
+		};
 	}
 	
 	private bool IsWithinDetectionRange()
@@ -139,4 +154,7 @@ public class MobBehavior
 	{
 		return _player.GlobalPosition - _actor.GlobalPosition;
 	}
+
+	private record StateInfo(TState[] PossibleStates, Func<bool>? Tick = null);
+	private record TState(MobState ToState, Func<bool> Condition);
 }
