@@ -1,8 +1,8 @@
 [gd_scene load_steps=9 format=3 uid="uid://b6t6eufj0ge8"]
 
-[ext_resource type="Texture2D" uid="uid://dr25n08h7vj5n" path="res://assets/great-sword.png" id="1_2qqmi"]
-[ext_resource type="Script" uid="uid://vtd3xy4yypix" path="res://levels/WeaponSword.cs" id="1_llx7q"]
-[ext_resource type="Script" uid="uid://3r03sui47g0q" path="res://scripts/HitBox.cs" id="3_llx7q"]
+[ext_resource type="Script" uid="uid://vtd3xy4yypix" path="res://levels/Weapons/Sword/WeaponSword.cs" id="1_bmifv"]
+[ext_resource type="Texture2D" uid="uid://dr25n08h7vj5n" path="res://assets/great-sword.png" id="2_6at5h"]
+[ext_resource type="Script" uid="uid://3r03sui47g0q" path="res://scripts/HitBox.cs" id="3_5u1vu"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tjyvl"]
 radius = 65.493
@@ -87,16 +87,16 @@ _data = {
 }
 
 [node name="WeaponSword" type="Node2D"]
-script = ExtResource("1_llx7q")
+script = ExtResource("1_bmifv")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 rotation = 3.38048
 scale = Vector2(0.15, 0.122)
-texture = ExtResource("1_2qqmi")
+texture = ExtResource("2_6at5h")
 offset = Vector2(280, 2)
 
 [node name="Hitbox" type="Area2D" parent="Sprite"]
-script = ExtResource("3_llx7q")
+script = ExtResource("3_5u1vu")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/Hitbox"]
 position = Vector2(488.196, -1.95752)

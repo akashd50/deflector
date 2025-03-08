@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=3 uid="uid://yp4wjw4lp8qb"]
 
 [ext_resource type="Texture2D" uid="uid://c3dbbunhymvmy" path="res://icon.svg" id="1_2y2p2"]
-[ext_resource type="Script" uid="uid://bnur6icfvqin4" path="res://levels/Player.cs" id="1_633ct"]
+[ext_resource type="Script" uid="uid://bnur6icfvqin4" path="res://levels/Player/Player.cs" id="1_633ct"]
 [ext_resource type="Texture2D" uid="uid://bqp1fcywewp7f" path="res://assets/mystic_woods/objects/rock_in_water-sheet.png" id="2_6rmis"]
-[ext_resource type="PackedScene" uid="uid://b6t6eufj0ge8" path="res://levels/weapon_sword.tscn" id="4_feiwi"]
+[ext_resource type="PackedScene" uid="uid://b6t6eufj0ge8" path="res://levels/Weapons/Sword/weapon_sword.tscn" id="4_feiwi"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q7845"]
 size = Vector2(57, 58)
