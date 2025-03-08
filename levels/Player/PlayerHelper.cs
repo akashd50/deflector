@@ -194,7 +194,7 @@ public class PlayerHelper(Player player)
 		foreach (var enemy in enemies)
 		{
 			var toEnemy = enemy.Position - player.Position;
-			var angleToEnemy = _faceDirection.AngleTo(toEnemy.Normalized());
+			var angleToEnemy = Math.Abs(_faceDirection.AngleTo(toEnemy.Normalized()));
 			if (angleToEnemy < closestEnemyAngle && angleToEnemy < double.DegreesToRadians(90))
 			{
 				closestEnemyAngle = angleToEnemy;
