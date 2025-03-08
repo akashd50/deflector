@@ -12,11 +12,13 @@ size = Vector2(57, 58)
 script = ExtResource("1_633ct")
 
 [node name="DeflectVis" type="Sprite2D" parent="."]
-position = Vector2(0, -23)
+position = Vector2(22, 2)
+rotation = 1.57091
 scale = Vector2(1, 2.75)
 texture = ExtResource("2_6rmis")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = 1.56411
 scale = Vector2(0.445313, 0.460938)
 texture = ExtResource("1_2y2p2")
 

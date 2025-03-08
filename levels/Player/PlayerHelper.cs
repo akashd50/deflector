@@ -125,6 +125,11 @@ public class PlayerHelper(Player player)
 		}
 		else
 		{
+			if (_lockedOnEnemy != null)
+			{
+				_faceDirection = _lockedOnEnemy.Position - player.Position;
+			}
+
 			_walkDirection = Vector2.Zero;
 		}
 	}
@@ -136,7 +141,7 @@ public class PlayerHelper(Player player)
 			return;
 		}
 		
-		Rotation = _faceDirection.Angle() - Vector2.Up.Angle();
+		Rotation = _faceDirection.Angle();
 	}
 
 	public void UpdateVelocity()
@@ -184,12 +189,13 @@ public class PlayerHelper(Player player)
 	private void DoLockOn(List<Node2D> enemies)
 	{
 		var closestEnemyAngle = 99.0f;
-		Node2D? closestEnemy = null;
+		Node2D closestEnemy = null;
 		
 		foreach (var enemy in enemies)
 		{
-			var angleToEnemy = Math.Abs(Rotation - (enemy.Position - Position).Angle());
-			if (angleToEnemy < closestEnemyAngle)
+			var toEnemy = enemy.Position - player.Position;
+			var angleToEnemy = _faceDirection.AngleTo(toEnemy.Normalized());
+			if (angleToEnemy < closestEnemyAngle && angleToEnemy < double.DegreesToRadians(90))
 			{
 				closestEnemyAngle = angleToEnemy;
 				closestEnemy = enemy;
