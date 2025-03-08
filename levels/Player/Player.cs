@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Deflector.levels;
+using Deflector.levels.Weapons.Sword;
 
-namespace Deflector.levels;
+namespace Deflector.levels.Player;
 
 public partial class Player : CharacterBody2D
 {

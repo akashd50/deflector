@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Deflector.levels;
+namespace Deflector.levels.Weapons;
 
 public partial class Weapon: Node2D
 {

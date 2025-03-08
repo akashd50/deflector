@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using Deflector.levels.Shared;
+using Godot;
 
 namespace Deflector.scripts;
 
@@ -13,11 +14,9 @@ public partial class HurtBox: Area2D
 
     private void OnAreaEntered(HitBox hitBox)
     {
-        GD.Print("OnAreaEntered");
-
-        if (Owner.HasMethod("TakeDamage"))
+        if (Owner is ICharacterWithHp characterWithHp)
         {
-            Owner.Call("TakeDamage", hitBox.Damage);
+            characterWithHp.TakeDamage(hitBox.Damage);
         }
     }
 }
