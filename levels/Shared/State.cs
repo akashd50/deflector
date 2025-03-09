@@ -2,7 +2,12 @@
 
 public enum State
 {
-    Idle,
+    Idle = 0,
     GoingToPlayer,
     Attacking,
+    
+    Reset,
+    RToSlash1Start,
+    Slash1,
+    Slash2,
 }

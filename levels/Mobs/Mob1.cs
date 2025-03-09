@@ -12,6 +12,8 @@ public partial class Mob1: MobBehavior, ICharacterWithHp
 		{
 			Init(player);
 		}
+		
+		Weapon = GetNode<Mob1Weapon>("MobWeapon");
 	}
 
 	public override void _PhysicsProcess(double delta)

@@ -2,4 +2,4 @@
 
 namespace Deflector.levels.Shared;
 
-public record StateInfo(TState[] PossibleStates, Func<bool>? Tick = null);
+public record StateInfo(TState[] PossibleStates, Func<bool>? Enter = null, Func<bool>? Tick = null, Func<bool>? Exit = null);
