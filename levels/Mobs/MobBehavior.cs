@@ -12,7 +12,7 @@ public partial class MobBehavior: CharacterBody2D
 	[Export] public int Aggressiveness = 50;
 	[Export] public int WalkSpeed = 30;
 	[Export] public int RunSpeed = 100;
-	[Export] public int RotationSpeed = 2;
+	[Export] public int RotationSpeed = 1;
 	
 	protected Weapon Weapon;
 	protected Vector2 WalkDirection = Vector2.Zero;
@@ -47,6 +47,7 @@ public partial class MobBehavior: CharacterBody2D
 		// }
 
 		MoveAndSlide();
+		ApplyDrag();
 	}
 	
 	private StateMap GetStateMap()
@@ -120,7 +121,8 @@ public partial class MobBehavior: CharacterBody2D
 		if (toPlayer.Length() > AttackRange)
 		{
 			WalkDirection = FaceDirection;
-			Velocity = WalkDirection * WalkSpeed;
+			Velocity += WalkDirection * RunSpeed;
+			ClampVelocity(RunSpeed);		
 			return false;
 		}
 
@@ -139,7 +141,8 @@ public partial class MobBehavior: CharacterBody2D
 			WalkDirection = randomDirection.Rotated(Rotation);	
 		}
 		
-		Velocity = WalkDirection * WalkSpeed;
+		Velocity += WalkDirection * WalkSpeed;
+		ClampVelocity(WalkSpeed);
 		
 		return true;
 	}
@@ -148,7 +151,7 @@ public partial class MobBehavior: CharacterBody2D
 	{
 		var toPlayer = ToPlayer();
 		var angleToPlayer = FaceDirection.AngleTo(toPlayer.Normalized());
-		if (Math.Abs(angleToPlayer) > double.DegreesToRadians(5))
+		if (Math.Abs(angleToPlayer) > double.DegreesToRadians(_random.Next(2, 45)))
 		{
 			if (angleToPlayer > 0)
 			{
@@ -177,6 +180,28 @@ public partial class MobBehavior: CharacterBody2D
 		_weaponStateMap.SetToState(Weapon.State);
 		return true;
 	}
+
+	private void ApplyDrag()
+	{
+		if (Velocity == Vector2.Zero)
+		{
+			return;
+		}
+
+		if (Math.Abs(Velocity.X) < 5 && Math.Abs(Velocity.Y) < 5)
+		{
+			Velocity = Vector2.Zero;
+			return;
+		}
+		
+		var dragVec = Velocity * -0.2f;
+		Velocity += dragVec;
+	}
+
+	private void ClampVelocity(int speed)
+	{
+		Velocity = Velocity.Clamp(new Vector2(-speed, -speed), new Vector2(speed, speed));			
+	}
 	
 	private bool IsWithinDetectionRange()
 	{
@@ -188,7 +213,6 @@ public partial class MobBehavior: CharacterBody2D
 	{
 		return ToPlayer().Length() <= AttackRange;
 	}
-
 	
 	private Vector2 ToPlayer()
 	{
