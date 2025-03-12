@@ -2,4 +2,4 @@
 
 namespace Deflector.levels.Shared;
 
-public record TState(State ToState, Func<bool> Condition);
+public record TState(State ToState, Func<int> Condition);

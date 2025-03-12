@@ -3,6 +3,8 @@
 public enum State
 {
     Idle = 0,
+    Null,
+    Wary,
     GoingToPlayer,
     Attacking,
     

@@ -18,7 +18,7 @@ public partial class Mob1: MobBehavior, ICharacterWithHp
 
 	public override void _PhysicsProcess(double delta)
 	{
-		Loop();
+		PhysicsLoop(delta);
 	}
 
 	public void TakeDamage(int damage)
