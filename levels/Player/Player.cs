@@ -13,12 +13,14 @@ public partial class Player : CharacterBody2D
 	public int Speed = 100;
 	
 	public Sprite2D DeflectSprite;
+	public AnimatedSprite2D DeflectIndicator;
 	public WeaponSword Weapon;
 	private PlayerHelper _playerHelper;
 	
 	public override void _Ready()
 	{
 		DeflectSprite = GetNode<Sprite2D>("DeflectVis");
+		DeflectIndicator = GetNode<AnimatedSprite2D>("DeflectIndicator");
 		Weapon = GetNode<WeaponSword>("WeaponSword");
 		_playerHelper = new PlayerHelper(this);
 		_playerHelper.Init();

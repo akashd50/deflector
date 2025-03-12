@@ -12,7 +12,7 @@ public class PlayerHelper(Player player)
 	
 	private int speed = 100;
 	
-	private const int DashDuration = 80;
+	private const int DashDuration = 150;
 	private bool _isDashing = false;
 	private ulong _dashStarted = 0;
 	private Vector2 _walkDirection = Vector2.Zero;
@@ -30,7 +30,8 @@ public class PlayerHelper(Player player)
 	public void Init()
 	{
 		player.DeflectSprite.Hide();
-		// player.Weapon.Connect("attackAnimationFinished", attackFinished);
+		player.DeflectIndicator.Hide();
+		player.DeflectIndicator.AnimationFinished += () => player.DeflectIndicator.Hide();
 	}
 	
 	public bool HandleDash(InputEvent @event)
@@ -42,7 +43,7 @@ public class PlayerHelper(Player player)
 			StopDeflecting();
 
 			_dashStarted = Time.GetTicksMsec();
-			Velocity = _walkDirection * (speed * 8);
+			Velocity = _walkDirection * (speed * 12);
 			return true;
 		}
 		
@@ -99,7 +100,9 @@ public class PlayerHelper(Player player)
 	{
 		_isDeflecting = true;
 		_deflectStarted = Time.GetTicksMsec();
-		player.DeflectSprite.Show();
+		// player.DeflectSprite.Show();
+		player.DeflectIndicator.Show();
+		player.DeflectIndicator.Play("success");
 	}
 
 	private void StopDeflecting()
