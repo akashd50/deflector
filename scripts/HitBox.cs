@@ -8,7 +8,7 @@ public partial class HitBox: Area2D
 
     public HitBox()
     {
-        CollisionLayer = 2;
-        CollisionMask = 0;
+        CollisionLayer = 4;
+        CollisionMask = 2;
     }
 }

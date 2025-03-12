@@ -58,7 +58,7 @@ public partial class Player : CharacterBody2D, IDamageable
 
 	public void TakeDamage(int damage)
 	{
-		// GD.Print("Player taking damage");
+		GD.Print("Player taking damage");
 	}
 
 	private void SetParameters()

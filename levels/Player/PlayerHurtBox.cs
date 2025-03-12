@@ -8,8 +8,8 @@ public partial class PlayerHurtBox: Area2D
 {
     public PlayerHurtBox()
     {
-        CollisionLayer = 0;
-        CollisionMask = 2;
+        CollisionLayer = 2;
+        CollisionMask = 4;
         Connect(Area2D.SignalName.AreaEntered, Callable.From((Area2D area2D) => OnAreaEntered(area2D)));
     }
     

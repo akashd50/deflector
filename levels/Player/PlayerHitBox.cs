@@ -8,15 +8,15 @@ public partial class PlayerHitBox: Area2D
 
 	public PlayerHitBox()
 	{
-		CollisionLayer = 4;
-		CollisionMask = 2;
+		CollisionLayer = 2;
+		CollisionMask = 4;
 	}
 }
 
 /*
- * Enemy  HurtBox on	Layer 2		Detects from Layer 4
- * Player HitBox on		Layer 4		Hits on Layer 2
+ * Enemy  HurtBox on	Layer 4		Detects from Layer 2
+ * Player HitBox on		Layer 2		Hits on Layer 4
  * 
- * Enemy  HitBox on		Layer 2		Hits on Layer 0
- * Player HurtBox on	Layer 0		Detects from Layer 2
+ * Enemy  HitBox on		Layer 4		Hits on Layer 2
+ * Player HurtBox on	Layer 2		Detects from Layer 4
  */

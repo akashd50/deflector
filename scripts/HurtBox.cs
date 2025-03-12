@@ -8,8 +8,8 @@ public partial class HurtBox: Area2D
 {
     public HurtBox()
     {
-        CollisionLayer = 2;
-        CollisionMask = 4;
+        CollisionLayer = 4;
+        CollisionMask = 2;
         Connect(Area2D.SignalName.AreaEntered, Callable.From((Area2D area2D) => OnAreaEntered(area2D)));
     }
 
