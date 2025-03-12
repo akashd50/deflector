@@ -27,7 +27,7 @@ public class StateMap : Dictionary<State, StateInfo>
 
         if (Time.GetTicksMsec() - _lastTransitionCheck > _timeBetweenTransitionChecks)
         {
-            if (TryTransitionState(stateInfo, out var toTransitionTo))
+            if (TryTransitionState(stateInfo, newState, out var toTransitionTo))
             {
                 newState = toTransitionTo;
             }
@@ -41,7 +41,7 @@ public class StateMap : Dictionary<State, StateInfo>
         return newState;
     }
 
-    private bool TryTransitionState(StateInfo stateInfo, out State newState)
+    private bool TryTransitionState(StateInfo stateInfo, State lastState, out State newState)
     {
         _lastTransitionCheck = Time.GetTicksMsec();
         newState = State.Null;
@@ -53,14 +53,21 @@ public class StateMap : Dictionary<State, StateInfo>
             {
                 var bestState = GetHighestRankedState(stateScores);
                 newState = bestState;
-                stateInfo.Exit?.Invoke();
-                this[newState].Enter?.Invoke();
+                if (newState != lastState)
+                {
+                    stateInfo.Exit?.Invoke();
+                    this[newState].Enter?.Invoke();
+                }
+               
                 break;
             }
             case 1:
                 newState = stateScores.Keys.First();
-                stateInfo.Exit?.Invoke();
-                this[newState].Enter?.Invoke();
+                if (newState != lastState)
+                {
+                    stateInfo.Exit?.Invoke();
+                    this[newState].Enter?.Invoke();
+                }
                 break;
         }
         
