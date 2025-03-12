@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://yp4wjw4lp8qb"]
+[gd_scene load_steps=19 format=3 uid="uid://yp4wjw4lp8qb"]
 
 [ext_resource type="Texture2D" uid="uid://c3dbbunhymvmy" path="res://icon.svg" id="1_2y2p2"]
 [ext_resource type="Script" uid="uid://bnur6icfvqin4" path="res://levels/Player/Player.cs" id="1_633ct"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://bgt1n0357xffj" path="res://assets/explosion-sprites/def-8.png" id="12_pg660"]
 [ext_resource type="Texture2D" uid="uid://ch6mns4gbsijm" path="res://assets/explosion-sprites/def-9.png" id="13_fxanq"]
 [ext_resource type="Texture2D" uid="uid://54qhlaro4jak" path="res://assets/explosion-sprites/def-10.png" id="14_8xfwe"]
+[ext_resource type="Script" uid="uid://bnmkvsm7cm6p4" path="res://levels/Player/PlayerHurtBox.cs" id="14_bn7xh"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_j2u4r"]
 animations = [{
@@ -53,6 +54,9 @@ animations = [{
 "speed": 20.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vol7m"]
+size = Vector2(131.113, 124.986)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q7845"]
 size = Vector2(57, 58)
 
@@ -74,6 +78,13 @@ texture = ExtResource("2_6rmis")
 rotation = 1.56411
 scale = Vector2(0.445313, 0.460938)
 texture = ExtResource("1_2y2p2")
+
+[node name="PlayerHurtBox" type="Area2D" parent="Sprite2D"]
+script = ExtResource("14_bn7xh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/PlayerHurtBox"]
+position = Vector2(-4.31171e-06, 4.11021e-06)
+shape = SubResource("RectangleShape2D_vol7m")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_q7845")

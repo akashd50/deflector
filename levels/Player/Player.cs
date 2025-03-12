@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Deflector.levels;
+using Deflector.levels.Shared;
 using Deflector.levels.Weapons.Sword;
 
 namespace Deflector.levels.Player;
 
-public partial class Player : CharacterBody2D
+public partial class Player : CharacterBody2D, IDamageable
 {
 	[Export]
 	public int Speed = 100;
@@ -53,6 +54,11 @@ public partial class Player : CharacterBody2D
 		{
 			SetParameters();
 		}
+	}
+
+	public void TakeDamage(int damage)
+	{
+		// GD.Print("Player taking damage");
 	}
 
 	private void SetParameters()

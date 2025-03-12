@@ -1,21 +1,21 @@
-﻿using Deflector.levels.Player;
-using Deflector.levels.Shared;
+﻿using Deflector.levels.Shared;
+using Deflector.scripts;
 using Godot;
 
-namespace Deflector.scripts;
+namespace Deflector.levels.Player;
 
-public partial class HurtBox: Area2D
+public partial class PlayerHurtBox: Area2D
 {
-    public HurtBox()
+    public PlayerHurtBox()
     {
-        CollisionLayer = 2;
-        CollisionMask = 4;
+        CollisionLayer = 0;
+        CollisionMask = 2;
         Connect(Area2D.SignalName.AreaEntered, Callable.From((Area2D area2D) => OnAreaEntered(area2D)));
     }
-
+    
     private void OnAreaEntered(Area2D area2D)
     {
-        if (area2D is not PlayerHitBox hitBox)
+        if (area2D is not HitBox hitBox)
         {
             return;
         }

@@ -3,7 +3,7 @@ using Godot;
 
 namespace Deflector.levels.Mobs;
 
-public partial class Mob1: MobBehavior, ICharacterWithHp
+public partial class Mob1: MobBehavior, IDamageable
 {
 	public override void _Ready()
 	{

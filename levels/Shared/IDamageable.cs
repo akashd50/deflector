@@ -1,6 +1,6 @@
 ﻿namespace Deflector.levels.Shared;
 
-public interface ICharacterWithHp
+public interface IDamageable
 {
     void TakeDamage(int damage);
 }
