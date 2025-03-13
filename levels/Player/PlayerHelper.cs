@@ -101,14 +101,23 @@ public class PlayerHelper(Player player)
 		_isDeflecting = true;
 		_deflectStarted = Time.GetTicksMsec();
 		// player.DeflectSprite.Show();
-		player.DeflectIndicator.Show();
-		player.DeflectIndicator.Play("success");
 	}
 
 	private void StopDeflecting()
 	{
 		_isDeflecting = false;
 		player.DeflectSprite.Hide();
+	}
+
+	public bool ShouldDeflectAttack()
+	{
+		return Time.GetTicksMsec() - _deflectStarted < DeflectDuration;
+	}
+
+	public void DeflectAttack()
+	{
+		player.DeflectIndicator.Show();
+		player.DeflectIndicator.Play("success");
 	}
 
 	public void UpdateDirections()

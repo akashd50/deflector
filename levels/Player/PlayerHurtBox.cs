@@ -20,9 +20,9 @@ public partial class PlayerHurtBox: Area2D
             return;
         }
         
-        if (Owner is IDamageable damageable)
+        if (Owner is Player player)
         {
-            damageable.TakeDamage(hitBox.Damage);
+            player.OnHitTaken(hitBox.Damage);
         }
     }
 }

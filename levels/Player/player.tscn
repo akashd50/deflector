@@ -51,7 +51,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"success",
-"speed": 20.0
+"speed": 40.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vol7m"]
@@ -67,6 +67,8 @@ script = ExtResource("1_633ct")
 scale = Vector2(0.7, 0.695)
 sprite_frames = SubResource("SpriteFrames_j2u4r")
 animation = &"success"
+frame = 9
+frame_progress = 1.0
 
 [node name="DeflectVis" type="Sprite2D" parent="."]
 position = Vector2(22, 2)

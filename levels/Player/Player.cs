@@ -8,19 +8,18 @@ using Deflector.levels.Weapons.Sword;
 
 namespace Deflector.levels.Player;
 
-public partial class Player : CharacterBody2D, IDamageable
+public partial class Player : CharacterBody2D
 {
 	[Export]
 	public int Speed = 100;
 	
 	public Sprite2D DeflectSprite;
 	public AnimatedSprite2D DeflectIndicator;
-	public WeaponSword Weapon;
+	public WeaponSword Weapon; 
 	private PlayerHelper _playerHelper;
 	
 	public override void _Ready()
 	{
-		DeflectSprite = GetNode<Sprite2D>("DeflectVis");
 		DeflectIndicator = GetNode<AnimatedSprite2D>("DeflectIndicator");
 		Weapon = GetNode<WeaponSword>("WeaponSword");
 		_playerHelper = new PlayerHelper(this);
@@ -56,9 +55,17 @@ public partial class Player : CharacterBody2D, IDamageable
 		}
 	}
 
-	public void TakeDamage(int damage)
+	public void OnHitTaken(int damage)
 	{
-		GD.Print("Player taking damage");
+		if (_playerHelper.ShouldDeflectAttack())
+		{
+			_playerHelper.DeflectAttack();
+			GD.Print("Deflected");
+		}
+		else
+		{
+			GD.Print("Player taking damage");	
+		}
 	}
 
 	private void SetParameters()
