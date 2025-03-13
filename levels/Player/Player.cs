@@ -13,7 +13,6 @@ public partial class Player : CharacterBody2D
 	[Export]
 	public int Speed = 100;
 	
-	public Sprite2D DeflectSprite;
 	public AnimatedSprite2D DeflectIndicator;
 	public WeaponSword Weapon; 
 	private PlayerHelper _playerHelper;

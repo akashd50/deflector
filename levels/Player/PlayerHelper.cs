@@ -29,7 +29,6 @@ public class PlayerHelper(Player player)
 
 	public void Init()
 	{
-		player.DeflectSprite.Hide();
 		player.DeflectIndicator.Hide();
 		player.DeflectIndicator.AnimationFinished += () => player.DeflectIndicator.Hide();
 	}
@@ -40,7 +39,7 @@ public class PlayerHelper(Player player)
 		{
 			_isDashing = true;
 
-			StopDeflecting();
+			StopBlocking();
 
 			_dashStarted = Time.GetTicksMsec();
 			Velocity = _walkDirection * (speed * 12);
@@ -56,12 +55,12 @@ public class PlayerHelper(Player player)
 		{
 			if (!_isDeflecting && @event.IsActionPressed("deflect"))
 			{
-				StartDeflecting();
+				StartBlocking();
 				return true;
 			}
 			else if (_isDeflecting && @event.IsActionReleased("deflect"))
 			{
-				StopDeflecting();
+				StopBlocking();
 				return true;
 			}
 		}
@@ -96,17 +95,15 @@ public class PlayerHelper(Player player)
 		return false;
 	}
 
-	private void StartDeflecting()
+	private void StartBlocking()
 	{
 		_isDeflecting = true;
 		_deflectStarted = Time.GetTicksMsec();
-		// player.DeflectSprite.Show();
 	}
 
-	private void StopDeflecting()
+	private void StopBlocking()
 	{
 		_isDeflecting = false;
-		player.DeflectSprite.Hide();
 	}
 
 	public bool ShouldDeflectAttack()

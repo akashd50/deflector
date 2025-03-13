@@ -4,7 +4,7 @@ using Deflector.levels.Shared;
 using Deflector.levels.Weapons;
 using Godot;
 
-namespace Deflector.levels.Mobs;
+namespace Deflector.levels.Mobs.Mob1;
 
 public partial class MobBehavior: CharacterBody2D
 {

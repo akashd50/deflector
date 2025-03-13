@@ -1,7 +1,7 @@
 using Deflector.levels.Shared;
 using Godot;
 
-namespace Deflector.levels.Mobs;
+namespace Deflector.levels.Mobs.Mob1;
 
 public partial class Mob1: MobBehavior, IDamageable
 {
