@@ -85,3 +85,7 @@ shape = SubResource("RectangleShape2D_vol7m")
 shape = SubResource("RectangleShape2D_q7845")
 
 [node name="WeaponSword" parent="." instance=ExtResource("4_feiwi")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+rotation_smoothing_enabled = true
