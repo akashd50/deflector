@@ -19,6 +19,8 @@ public partial class Player : CharacterBody2D
 	
 	public override void _Ready()
 	{
+		AddToGroup("Player");
+		AddToGroup("Persist");
 		DeflectIndicator = GetNode<AnimatedSprite2D>("DeflectIndicator");
 		Weapon = GetNode<WeaponSword>("WeaponSword");
 		_playerHelper = new PlayerHelper(this);
@@ -75,6 +77,6 @@ public partial class Player : CharacterBody2D
 
 	private List<Node2D> GetAllEnemies()
 	{
-		return GetTree().GetNodesInGroup("enemies").OfType<Node2D>().ToList();
+		return GetTree().GetNodesInGroup("Enemies").OfType<Node2D>().ToList();
 	}
 }

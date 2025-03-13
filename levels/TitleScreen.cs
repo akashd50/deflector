@@ -14,5 +14,9 @@ public partial class TitleScreen : Control
 		};
 		
 		_quitButton = GetNode<Button>("QuitButton");
+		_quitButton.Pressed += () =>
+		{
+			GetTree().Quit();
+		};
 	}
 }

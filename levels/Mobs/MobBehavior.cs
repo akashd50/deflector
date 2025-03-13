@@ -30,6 +30,9 @@ public partial class MobBehavior: CharacterBody2D
 	
 	protected void Init(Player.Player player)
 	{
+		AddToGroup("Enemies");
+		AddToGroup("Persist");
+
 		_random = new Random();
 		_player = player;
 		_state =  State.Idle;
@@ -38,7 +41,7 @@ public partial class MobBehavior: CharacterBody2D
 		FaceDirection = Vector2.Right.Rotated(Rotation);
 	}
 
-	protected void PhysicsLoop(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		// if (PhysicsHelper.ShouldExecuteBehaviorLoop(_lastPhysicsFrameTime, delta))
 		// {
@@ -50,7 +53,7 @@ public partial class MobBehavior: CharacterBody2D
 		ApplyDrag();
 	}
 	
-	private StateMap GetStateMap()
+	protected virtual StateMap GetStateMap()
 	{
 		return new StateMap(1000)
 		{
@@ -76,28 +79,12 @@ public partial class MobBehavior: CharacterBody2D
 		};
 	}
 
-	private StateMap GetWeaponStateMap()
+	protected virtual StateMap GetWeaponStateMap()
 	{
-		return new StateMap(0)
-		{
-			{ State.Reset, new StateInfo([
-				new TState(State.RToSlash1Start, () => !Weapon.IsAnimating && IsWithinAttackRange() ? ActionScoreRoll(100) : 0),
-			], () => Weapon.ResetAnimation())},
-			{ State.RToSlash1Start, new StateInfo([
-				new TState(State.Slash1, () => !Weapon.IsAnimating ? ActionScoreRoll(25) : 0),
-			], () => Weapon.PlayAnimation("reset-to-slash-1-start"))},
-			{ State.Slash1, new StateInfo([
-				new TState(State.Slash2, () => !Weapon.IsAnimating ? ActionScoreRoll(80) : 0),
-				new TState(State.Reset, () => !Weapon.IsAnimating ? ActionScoreRoll(25) : 0),
-			], () => Weapon.PlayAnimation("slash-1"))},
-			{ State.Slash2, new StateInfo([
-				new TState(State.Slash1, () => !Weapon.IsAnimating ? ActionScoreRoll(50) : 0),
-				new TState(State.Reset, () => !Weapon.IsAnimating ? ActionScoreRoll(25) : 0),
-			], () => Weapon.PlayAnimation("slash-2"))}
-		};
+		return new StateMap(0);
 	}
 
-	private bool IsWithinVisibleRegion()
+	protected bool IsWithinVisibleRegion()
 	{
 		if (!IsWithinDetectionRange())
 		{
@@ -114,7 +101,7 @@ public partial class MobBehavior: CharacterBody2D
 		return true;
 	}
 	
-	private bool GoToPlayer()
+	protected bool GoToPlayer()
 	{
 		TrackPlayerIfNeeded();
 		var toPlayer = ToPlayer();
@@ -130,7 +117,7 @@ public partial class MobBehavior: CharacterBody2D
 		return true;
 	}
 
-	private bool ActWary()
+	protected bool ActWary()
 	{
 		TrackPlayerIfNeeded();
 
@@ -167,18 +154,34 @@ public partial class MobBehavior: CharacterBody2D
 		return true;
 	}
 
-	private bool AttackPlayer()
+	protected bool AttackPlayer()
 	{
 		Velocity = Vector2.Zero;
 		Weapon.State = _weaponStateMap.Execute(Weapon.State);
 		return true;
 	}
 
-	private bool ResetAttack()
+	protected bool ResetAttack()
 	{
 		Weapon.State = State.Reset;
 		_weaponStateMap.SetToState(Weapon.State);
 		return true;
+	}
+	
+	protected bool IsWithinDetectionRange()
+	{
+		return ToPlayer().Length() <= DetectionRange;
+	}
+
+
+	protected bool IsWithinAttackRange()
+	{
+		return ToPlayer().Length() <= AttackRange;
+	}
+	
+	protected int ActionScoreRoll(int minScore)
+	{
+		return _random.Next(minScore, 101);
 	}
 
 	private void ApplyDrag()
@@ -202,25 +205,9 @@ public partial class MobBehavior: CharacterBody2D
 	{
 		Velocity = Velocity.Clamp(new Vector2(-speed, -speed), new Vector2(speed, speed));			
 	}
-	
-	private bool IsWithinDetectionRange()
-	{
-		return ToPlayer().Length() <= DetectionRange;
-	}
 
-
-	private bool IsWithinAttackRange()
-	{
-		return ToPlayer().Length() <= AttackRange;
-	}
-	
 	private Vector2 ToPlayer()
 	{
 		return _player.GlobalPosition - GlobalPosition;
-	}
-
-	private int ActionScoreRoll(int minScore)
-	{
-		return _random.Next(minScore, 101);
 	}
 }

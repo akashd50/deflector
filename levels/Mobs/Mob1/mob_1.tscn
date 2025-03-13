@@ -189,7 +189,7 @@ _data = {
 &"stab-1": SubResource("Animation_ud56t")
 }
 
-[node name="Mob1" type="CharacterBody2D" groups=["enemies"]]
+[node name="Mob1" type="CharacterBody2D"]
 script = ExtResource("1_duqgd")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
