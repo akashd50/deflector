@@ -2,9 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://cb6s5pny0mcwn" path="res://assets/mystic_woods/tilesets/plains.png" id="1_2t326"]
 [ext_resource type="Texture2D" uid="uid://c0tx4ukh5k7h6" path="res://assets/mystic_woods/tilesets/grass.png" id="2_gcc04"]
-[ext_resource type="PackedScene" uid="uid://djrxfdgmjnk8k" path="res://levels/Mobs/Mob1/mob_1.tscn" id="3_ycfwp"]
-[ext_resource type="PackedScene" uid="uid://yp4wjw4lp8qb" path="res://levels/Player/player.tscn" id="4_jviqg"]
-[ext_resource type="PackedScene" uid="uid://dcvj4odjpd46r" path="res://levels/combat_ui.tscn" id="5_ogvtk"]
+[ext_resource type="PackedScene" uid="uid://djrxfdgmjnk8k" path="res://Data/Mobs/Mob1/mob_1.tscn" id="3_ycfwp"]
+[ext_resource type="PackedScene" uid="uid://yp4wjw4lp8qb" path="res://Data/Player/player.tscn" id="4_jviqg"]
+[ext_resource type="PackedScene" uid="uid://dcvj4odjpd46r" path="res://Data/combat_ui.tscn" id="5_ogvtk"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1y6bc"]
 texture = ExtResource("1_2t326")

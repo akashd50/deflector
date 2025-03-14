@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cxb7ips71us1g"]
+
+[ext_resource type="Script" uid="uid://crt22mprdikq0" path="res://Data/LootableItem/LootableItem.cs" id="1_voj5x"]
+
+[node name="LootableItem" type="Node2D"]
+script = ExtResource("1_voj5x")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]

@@ -1,11 +1,11 @@
 [gd_scene load_steps=16 format=3 uid="uid://djrxfdgmjnk8k"]
 
 [ext_resource type="Texture2D" uid="uid://c3dbbunhymvmy" path="res://icon.svg" id="1_c4vsv"]
-[ext_resource type="Script" uid="uid://blubqilnabidn" path="res://levels/Mobs/Mob1/Mob1.cs" id="1_duqgd"]
-[ext_resource type="Script" uid="uid://cmehtge02ttwq" path="res://scripts/HurtBox.cs" id="3_duqgd"]
-[ext_resource type="Script" uid="uid://cy1d5diw03g3w" path="res://levels/Mobs/Mob1/Mob1Weapon.cs" id="4_42r7u"]
+[ext_resource type="Script" uid="uid://blubqilnabidn" path="res://Data/Mobs/Mob1/Mob1.cs" id="1_duqgd"]
+[ext_resource type="Script" uid="uid://cmehtge02ttwq" path="res://Data/Mobs/HurtBox.cs" id="3_duqgd"]
+[ext_resource type="Script" uid="uid://cy1d5diw03g3w" path="res://Data/Mobs/Mob1/Mob1Weapon.cs" id="4_42r7u"]
 [ext_resource type="Texture2D" uid="uid://dr25n08h7vj5n" path="res://assets/great-sword.png" id="4_5374e"]
-[ext_resource type="Script" uid="uid://3r03sui47g0q" path="res://scripts/HitBox.cs" id="5_wcbux"]
+[ext_resource type="Script" uid="uid://3r03sui47g0q" path="res://Data/Mobs/HitBox.cs" id="5_wcbux"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_blvns"]
 size = Vector2(135.111, 135.53)

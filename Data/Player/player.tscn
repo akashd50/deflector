@@ -1,8 +1,8 @@
 [gd_scene load_steps=18 format=3 uid="uid://yp4wjw4lp8qb"]
 
 [ext_resource type="Texture2D" uid="uid://c3dbbunhymvmy" path="res://icon.svg" id="1_2y2p2"]
-[ext_resource type="Script" uid="uid://bnur6icfvqin4" path="res://levels/Player/Player.cs" id="1_633ct"]
-[ext_resource type="PackedScene" uid="uid://b6t6eufj0ge8" path="res://levels/Weapons/Sword/weapon_sword.tscn" id="4_feiwi"]
+[ext_resource type="Script" uid="uid://bnur6icfvqin4" path="res://Data/Player/Player.cs" id="1_633ct"]
+[ext_resource type="PackedScene" uid="uid://b6t6eufj0ge8" path="res://Data/Weapons/Sword/weapon_sword.tscn" id="4_feiwi"]
 [ext_resource type="Texture2D" uid="uid://jl3j5jcnftlq" path="res://assets/explosion-sprites/def-1.png" id="5_vol7m"]
 [ext_resource type="Texture2D" uid="uid://do55div8w10w5" path="res://assets/explosion-sprites/def-2.png" id="6_bn7xh"]
 [ext_resource type="Texture2D" uid="uid://cbow4qwgy784p" path="res://assets/explosion-sprites/def-3.png" id="7_1y2b1"]
@@ -13,7 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://bgt1n0357xffj" path="res://assets/explosion-sprites/def-8.png" id="12_pg660"]
 [ext_resource type="Texture2D" uid="uid://ch6mns4gbsijm" path="res://assets/explosion-sprites/def-9.png" id="13_fxanq"]
 [ext_resource type="Texture2D" uid="uid://54qhlaro4jak" path="res://assets/explosion-sprites/def-10.png" id="14_8xfwe"]
-[ext_resource type="Script" uid="uid://bnmkvsm7cm6p4" path="res://levels/Player/PlayerHurtBox.cs" id="14_bn7xh"]
+[ext_resource type="Script" uid="uid://bnmkvsm7cm6p4" path="res://Data/Player/PlayerHurtBox.cs" id="14_bn7xh"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_j2u4r"]
 animations = [{

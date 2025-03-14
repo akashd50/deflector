@@ -1,8 +1,8 @@
 [gd_scene load_steps=9 format=3 uid="uid://b6t6eufj0ge8"]
 
-[ext_resource type="Script" uid="uid://vtd3xy4yypix" path="res://levels/Weapons/Sword/WeaponSword.cs" id="1_bmifv"]
+[ext_resource type="Script" uid="uid://vtd3xy4yypix" path="res://Data/Weapons/Sword/WeaponSword.cs" id="1_bmifv"]
 [ext_resource type="Texture2D" uid="uid://dr25n08h7vj5n" path="res://assets/great-sword.png" id="2_6at5h"]
-[ext_resource type="Script" uid="uid://hk1a06qnisbh" path="res://levels/Player/PlayerHitBox.cs" id="3_bmifv"]
+[ext_resource type="Script" uid="uid://hk1a06qnisbh" path="res://Data/Player/PlayerHitBox.cs" id="3_bmifv"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tjyvl"]
 radius = 65.493

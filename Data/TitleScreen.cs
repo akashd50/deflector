@@ -10,7 +10,7 @@ public partial class TitleScreen : Control
 		_startButton = GetNode<Button>("StartButton");
 		_startButton.Pressed += () =>
 		{
-			GetTree().ChangeSceneToFile("res://levels/level-1.tscn");
+			GetTree().ChangeSceneToFile("res://Data/level-1.tscn");
 		};
 		
 		_quitButton = GetNode<Button>("QuitButton");
