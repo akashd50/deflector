@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-namespace Deflector.levels.Player;
+namespace Deflector.Data.Player;
 
 public class PlayerHelper(Player player)
 {

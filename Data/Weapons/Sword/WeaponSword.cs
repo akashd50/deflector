@@ -1,4 +1,4 @@
-namespace Deflector.levels.Weapons.Sword;
+namespace Deflector.Data.Weapons.Sword;
 
 public partial class WeaponSword: Weapon
 {

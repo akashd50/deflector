@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Deflector.levels.Player;
+namespace Deflector.Data.Player;
 
 public partial class PlayerHitBox: Area2D
 {

@@ -1,5 +1,5 @@
 ﻿using System;
 
-namespace Deflector.levels.Shared;
+namespace Deflector.Data.Shared;
 
 public record TState(State ToState, Func<int> Condition);

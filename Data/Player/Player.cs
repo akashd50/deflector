@@ -1,12 +1,9 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Deflector.levels;
-using Deflector.levels.Shared;
-using Deflector.levels.Weapons.Sword;
+using Deflector.Data.Weapons.Sword;
 
-namespace Deflector.levels.Player;
+namespace Deflector.Data.Player;
 
 public partial class Player : CharacterBody2D
 {

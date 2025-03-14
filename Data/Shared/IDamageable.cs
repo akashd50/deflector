@@ -1,4 +1,4 @@
-﻿namespace Deflector.levels.Shared;
+﻿namespace Deflector.Data.Shared;
 
 public interface IDamageable
 {

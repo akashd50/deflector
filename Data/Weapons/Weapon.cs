@@ -1,7 +1,7 @@
-using Deflector.levels.Shared;
+using Deflector.Data.Shared;
 using Godot;
 
-namespace Deflector.levels.Weapons;
+namespace Deflector.Data.Weapons;
 
 public partial class Weapon: Node2D
 {

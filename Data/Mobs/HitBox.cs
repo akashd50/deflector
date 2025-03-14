@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace Deflector.scripts;
+namespace Deflector.Data.Mobs;
 
 public partial class HitBox: Area2D
 {

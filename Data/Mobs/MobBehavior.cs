@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
-using Deflector.levels.Shared;
-using Deflector.levels.Weapons;
+using Deflector.Data.Shared;
+using Deflector.Data.Weapons;
 using Godot;
 
-namespace Deflector.levels.Mobs.Mob1;
+namespace Deflector.Data.Mobs;
 
 public partial class MobBehavior: CharacterBody2D
 {

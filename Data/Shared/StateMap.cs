@@ -2,7 +2,7 @@
 using System.Linq;
 using Godot;
 
-namespace Deflector.levels.Shared;
+namespace Deflector.Data.Shared;
 
 public class StateMap : Dictionary<State, StateInfo>
 {

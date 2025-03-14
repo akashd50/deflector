@@ -1,8 +1,8 @@
-﻿using Deflector.levels.Player;
-using Deflector.levels.Shared;
+﻿using Deflector.Data.Player;
+using Deflector.Data.Shared;
 using Godot;
 
-namespace Deflector.scripts;
+namespace Deflector.Data.Mobs;
 
 public partial class HurtBox: Area2D
 {

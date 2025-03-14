@@ -1,7 +1,6 @@
-using Deflector.levels.Shared;
-using Deflector.levels.Weapons;
+using Deflector.Data.Weapons;
 
-namespace Deflector.levels.Mobs.Mob1;
+namespace Deflector.Data.Mobs.Mob1;
 
 public partial class Mob1Weapon: Weapon
 {
