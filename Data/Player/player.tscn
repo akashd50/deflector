@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://yp4wjw4lp8qb"]
+[gd_scene load_steps=20 format=3 uid="uid://yp4wjw4lp8qb"]
 
 [ext_resource type="Texture2D" uid="uid://c3dbbunhymvmy" path="res://icon.svg" id="1_2y2p2"]
 [ext_resource type="Script" uid="uid://bnur6icfvqin4" path="res://Data/Player/Player.cs" id="1_633ct"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://ch6mns4gbsijm" path="res://assets/explosion-sprites/def-9.png" id="13_fxanq"]
 [ext_resource type="Texture2D" uid="uid://54qhlaro4jak" path="res://assets/explosion-sprites/def-10.png" id="14_8xfwe"]
 [ext_resource type="Script" uid="uid://bnmkvsm7cm6p4" path="res://Data/Player/PlayerHurtBox.cs" id="14_bn7xh"]
+[ext_resource type="Script" uid="uid://ct8ummkvify5q" path="res://Data/Player/PlayerLootArea.cs" id="15_f3ift"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_j2u4r"]
 animations = [{
@@ -59,6 +60,9 @@ size = Vector2(131.113, 124.986)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q7845"]
 size = Vector2(57, 58)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_ih5kk"]
+radius = 65.0
+
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_633ct")
 
@@ -81,7 +85,7 @@ script = ExtResource("14_bn7xh")
 position = Vector2(-4.31171e-06, 4.11021e-06)
 shape = SubResource("RectangleShape2D_vol7m")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="PlayerCollisionShape" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_q7845")
 
 [node name="WeaponSword" parent="." instance=ExtResource("4_feiwi")]
@@ -89,3 +93,9 @@ shape = SubResource("RectangleShape2D_q7845")
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
+
+[node name="PlayerLootArea" type="Area2D" parent="."]
+script = ExtResource("15_f3ift")
+
+[node name="PlayerLootAreaCollisionShape" type="CollisionShape2D" parent="PlayerLootArea"]
+shape = SubResource("CircleShape2D_ih5kk")

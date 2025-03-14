@@ -1,8 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://cxb7ips71us1g"]
+[gd_scene load_steps=4 format=3 uid="uid://cxb7ips71us1g"]
 
 [ext_resource type="Script" uid="uid://crt22mprdikq0" path="res://Data/LootableItem/LootableItem.cs" id="1_voj5x"]
+[ext_resource type="Script" uid="uid://rphmv10hgly4" path="res://Data/LootableItem/LootableArea.cs" id="2_rauwp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xwxvj"]
+radius = 15.0
 
 [node name="LootableItem" type="Node2D"]
 script = ExtResource("1_voj5x")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="ItemSprite" type="Sprite2D" parent="."]
+
+[node name="LootableArea" type="Area2D" parent="."]
+script = ExtResource("2_rauwp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LootableArea"]
+shape = SubResource("CircleShape2D_xwxvj")

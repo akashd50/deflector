@@ -1,23 +1,28 @@
 [gd_scene format=3 uid="uid://dcvj4odjpd46r"]
 
-[node name="CombatUI" type="Control"]
+[node name="CombatUI" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="HpBar" type="Control" parent="."]
+[node name="HpBar" type="Control" parent="Control"]
+layout_mode = 3
 anchors_preset = 0
 offset_left = 25.435
 offset_top = 25.37
 offset_right = 65.435
 offset_bottom = 65.37
 
-[node name="Background" type="ColorRect" parent="HpBar"]
+[node name="Background" type="ColorRect" parent="Control/HpBar"]
 layout_mode = 2
 offset_right = 102.0
 offset_bottom = 12.0
 color = Color(0.00351917, 0.00351917, 0.00351917, 1)
 
-[node name="Fill" type="ColorRect" parent="HpBar"]
+[node name="Fill" type="ColorRect" parent="Control/HpBar"]
 layout_mode = 2
 offset_left = 1.0
 offset_top = 1.0
@@ -25,12 +30,13 @@ offset_right = 101.0
 offset_bottom = 11.0
 color = Color(0.79625, 0.212367, 0.124744, 1)
 
-[node name="HpBar2" type="Control" parent="."]
+[node name="HpBar2" type="Control" parent="Control"]
+layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="HpBar2"]
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Control/HpBar2"]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
