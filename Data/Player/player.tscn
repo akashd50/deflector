@@ -1,23 +1,86 @@
-[gd_scene load_steps=20 format=3 uid="uid://yp4wjw4lp8qb"]
+[gd_scene load_steps=33 format=3 uid="uid://yp4wjw4lp8qb"]
 
 [ext_resource type="Texture2D" uid="uid://c3dbbunhymvmy" path="res://icon.svg" id="1_2y2p2"]
 [ext_resource type="Script" uid="uid://bnur6icfvqin4" path="res://Data/Player/Player.cs" id="1_633ct"]
+[ext_resource type="Texture2D" uid="uid://eygpuvsojy61" path="res://assets/spark-1-sprites/0.png" id="2_oax0i"]
+[ext_resource type="Texture2D" uid="uid://coh88x8y72pfy" path="res://assets/spark-1-sprites/1.png" id="3_hworc"]
+[ext_resource type="Texture2D" uid="uid://cjofmo35swu13" path="res://assets/spark-1-sprites/2.png" id="4_b21lg"]
 [ext_resource type="PackedScene" uid="uid://b6t6eufj0ge8" path="res://Data/Weapons/Sword/weapon_sword.tscn" id="4_feiwi"]
+[ext_resource type="Texture2D" uid="uid://3u3bdupoim5d" path="res://assets/spark-1-sprites/3.png" id="5_dr872"]
 [ext_resource type="Texture2D" uid="uid://jl3j5jcnftlq" path="res://assets/explosion-sprites/def-1.png" id="5_vol7m"]
 [ext_resource type="Texture2D" uid="uid://do55div8w10w5" path="res://assets/explosion-sprites/def-2.png" id="6_bn7xh"]
+[ext_resource type="Texture2D" uid="uid://cg1qfa8slj1qo" path="res://assets/spark-1-sprites/4.png" id="6_jnjfg"]
 [ext_resource type="Texture2D" uid="uid://cbow4qwgy784p" path="res://assets/explosion-sprites/def-3.png" id="7_1y2b1"]
+[ext_resource type="Texture2D" uid="uid://cc2rdils8i1ov" path="res://assets/spark-1-sprites/5.png" id="7_bppmh"]
 [ext_resource type="Texture2D" uid="uid://dcuysuohvo1yc" path="res://assets/explosion-sprites/def-4.png" id="8_86hvt"]
+[ext_resource type="Texture2D" uid="uid://e1kwyf6uk1go" path="res://assets/spark-1-sprites/6.png" id="8_acoew"]
 [ext_resource type="Texture2D" uid="uid://bwa234i6h5spi" path="res://assets/explosion-sprites/def-5.png" id="9_nge3i"]
+[ext_resource type="Texture2D" uid="uid://cmm4k0x3awq0r" path="res://assets/spark-1-sprites/7.png" id="9_pfh2c"]
 [ext_resource type="Texture2D" uid="uid://vipvhii1me8c" path="res://assets/explosion-sprites/def-6.png" id="10_gdsu0"]
+[ext_resource type="Texture2D" uid="uid://cs8bt85ldt0qo" path="res://assets/spark-1-sprites/8.png" id="10_wulhy"]
 [ext_resource type="Texture2D" uid="uid://bbm6s3wx0l7y3" path="res://assets/explosion-sprites/def-7.png" id="11_23sr3"]
+[ext_resource type="Texture2D" uid="uid://b0rkyndiie1vq" path="res://assets/spark-1-sprites/9.png" id="11_qusk8"]
 [ext_resource type="Texture2D" uid="uid://bgt1n0357xffj" path="res://assets/explosion-sprites/def-8.png" id="12_pg660"]
+[ext_resource type="Texture2D" uid="uid://bavg5wdxoc6f6" path="res://assets/spark-1-sprites/10.png" id="12_qgx2s"]
+[ext_resource type="Texture2D" uid="uid://b1st1brdpxddq" path="res://assets/spark-1-sprites/11.png" id="13_cx3ad"]
 [ext_resource type="Texture2D" uid="uid://ch6mns4gbsijm" path="res://assets/explosion-sprites/def-9.png" id="13_fxanq"]
+[ext_resource type="Texture2D" uid="uid://dhvnvme5nk16l" path="res://assets/spark-1-sprites/12.png" id="14_1llg3"]
 [ext_resource type="Texture2D" uid="uid://54qhlaro4jak" path="res://assets/explosion-sprites/def-10.png" id="14_8xfwe"]
 [ext_resource type="Script" uid="uid://bnmkvsm7cm6p4" path="res://Data/Player/PlayerHurtBox.cs" id="14_bn7xh"]
 [ext_resource type="Script" uid="uid://ct8ummkvify5q" path="res://Data/Player/PlayerLootArea.cs" id="15_f3ift"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vol7m"]
+size = Vector2(131.113, 124.986)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q7845"]
+size = Vector2(57, 58)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_j2u4r"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_oax0i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_hworc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_b21lg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_dr872")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_jnjfg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_bppmh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_acoew")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_pfh2c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_wulhy")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_qusk8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_qgx2s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_cx3ad")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_1llg3")
+}],
+"loop": false,
+"name": &"deflect",
+"speed": 24.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("5_vol7m")
@@ -54,24 +117,11 @@ animations = [{
 "speed": 40.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_vol7m"]
-size = Vector2(131.113, 124.986)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_q7845"]
-size = Vector2(57, 58)
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_ih5kk"]
 radius = 65.0
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_633ct")
-
-[node name="DeflectIndicator" type="AnimatedSprite2D" parent="."]
-scale = Vector2(0.7, 0.695)
-sprite_frames = SubResource("SpriteFrames_j2u4r")
-animation = &"success"
-frame = 9
-frame_progress = 1.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.56411
@@ -89,6 +139,14 @@ shape = SubResource("RectangleShape2D_vol7m")
 shape = SubResource("RectangleShape2D_q7845")
 
 [node name="WeaponSword" parent="." instance=ExtResource("4_feiwi")]
+
+[node name="DeflectIndicator" type="AnimatedSprite2D" parent="."]
+position = Vector2(38, 1)
+scale = Vector2(0.7, 0.695)
+sprite_frames = SubResource("SpriteFrames_j2u4r")
+animation = &"deflect"
+frame = 12
+frame_progress = 1.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true

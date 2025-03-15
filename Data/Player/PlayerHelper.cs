@@ -31,6 +31,16 @@ public class PlayerHelper(Player player)
 	{
 		player.DeflectIndicator.Hide();
 		player.DeflectIndicator.AnimationFinished += () => player.DeflectIndicator.Hide();
+		/*player.Weapon.OnAnimationFinished += (string name) =>
+		{
+			switch (name)
+			{
+				case "stop-blocking":
+				{
+					_isDeflecting = false;
+				},
+			};
+		};*/
 	}
 	
 	public bool HandleDash(InputEvent @event)
@@ -39,7 +49,10 @@ public class PlayerHelper(Player player)
 		{
 			_isDashing = true;
 
-			StopBlocking();
+			if (_isDeflecting)
+			{
+				StopBlocking();
+			}
 
 			_dashStarted = Time.GetTicksMsec();
 			Velocity = _walkDirection * (speed * 12);
@@ -51,14 +64,20 @@ public class PlayerHelper(Player player)
 
 	public bool HandleDeflect(InputEvent @event)
 	{
+		if (!@event.IsAction("deflect"))
+		{
+			return false;
+		}
+		
 		if (!_isDashing && !player.Weapon.IsAttacking)
 		{
-			if (!_isDeflecting && @event.IsActionPressed("deflect"))
+			if (!_isDeflecting && @event.IsPressed())
 			{
 				StartBlocking();
 				return true;
 			}
-			else if (_isDeflecting && @event.IsActionReleased("deflect"))
+			
+			if (_isDeflecting && @event.IsReleased())
 			{
 				StopBlocking();
 				return true;
@@ -89,7 +108,7 @@ public class PlayerHelper(Player player)
 	{
 		if (!player.Weapon.IsAttacking && @event.IsActionPressed("attack"))
 		{
-			player.Weapon.Attack1();
+			player.Weapon.QueueAnimation("slash-1");
 			return true;
 		}
 		return false;
@@ -99,11 +118,23 @@ public class PlayerHelper(Player player)
 	{
 		_isDeflecting = true;
 		_deflectStarted = Time.GetTicksMsec();
+		player.Weapon.QueueAnimation("start-blocking", () =>
+		{
+			if (!Input.IsActionPressed("deflect"))
+			{
+				StopBlocking();
+			}
+			return true;
+		});
 	}
 
 	private void StopBlocking()
 	{
-		_isDeflecting = false;
+		player.Weapon.QueueAnimation("stop-blocking", () =>
+		{
+			_isDeflecting = false;
+			return true;
+		});
 	}
 
 	public bool ShouldDeflectAttack()
@@ -114,7 +145,7 @@ public class PlayerHelper(Player player)
 	public void DeflectAttack()
 	{
 		player.DeflectIndicator.Show();
-		player.DeflectIndicator.Play("success");
+		player.DeflectIndicator.Play("deflect");
 	}
 
 	public void UpdateDirections()
@@ -141,6 +172,15 @@ public class PlayerHelper(Player player)
 
 			_walkDirection = Vector2.Zero;
 		}
+
+		/*if (Input.IsActionPressed("deflect") && !_isDeflecting)
+		{
+			StartBlocking();
+		}
+		else if (!Input.IsActionPressed("deflect") && _isDeflecting)
+		{
+			StopBlocking();
+		}*/
 	}
 
 	public void UpdateRotation()

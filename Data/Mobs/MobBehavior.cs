@@ -16,6 +16,7 @@ public partial class MobBehavior: CharacterBody2D
 	protected Weapon Weapon;
 	protected Vector2 WalkDirection = Vector2.Zero;
 	protected Vector2 FaceDirection = Vector2.Zero;
+	protected AnimatedSprite2D AnimatedSprite;
 	
 	private const int VisibleConeAngle = 45;
 	private const int AttackRange = 200;
@@ -32,6 +33,8 @@ public partial class MobBehavior: CharacterBody2D
 		AddToGroup("Enemies");
 		AddToGroup("Persist");
 
+		AnimatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		
 		_random = new Random();
 		_player = player;
 		_state =  State.Idle;
@@ -51,7 +54,7 @@ public partial class MobBehavior: CharacterBody2D
 		MoveAndSlide();
 		ApplyDrag();
 	}
-	
+
 	protected virtual StateMap GetStateMap()
 	{
 		return new StateMap(1000)
