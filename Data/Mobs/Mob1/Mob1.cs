@@ -43,7 +43,7 @@ public partial class Mob1: MobBehavior, IDamageable
 				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(70) : 0),
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
-			], Tick: AttackPlayer, Exit: ResetAttack, ReEval: () => !Weapon.IsAttacking )},
+			], Tick: AttackPlayer, Exit: AttackPlayer, ReEval: () => !Weapon.IsAttacking )},
 		};
 	}
 	
@@ -53,18 +53,18 @@ public partial class Mob1: MobBehavior, IDamageable
 		{
 			{ State.Reset, new StateInfo([
 				new TState(State.RToSlash1Start, () => !Weapon.IsAnimating && IsWithinAttackRange() ? ActionScoreRoll(100) : 0),
-			], () => Weapon.ResetAnimation())},
+			], _ => Weapon.ResetAnimation())},
 			{ State.RToSlash1Start, new StateInfo([
 				new TState(State.Slash1, () => !Weapon.IsAnimating ? ActionScoreRoll(25) : 0),
-			], () => Weapon.QueueAnimation("reset-to-slash-1-start"))},
+			], _ => Weapon.QueueAnimation("reset-to-slash-1-start"))},
 			{ State.Slash1, new StateInfo([
 				new TState(State.Slash2, () => !Weapon.IsAnimating ? ActionScoreRoll(80) : 0),
 				new TState(State.Reset, () => !Weapon.IsAnimating ? ActionScoreRoll(25) : 0),
-			], () => Weapon.QueueAnimation("slash-1"))},
+			], _ => Weapon.QueueAnimation("slash-1"))},
 			{ State.Slash2, new StateInfo([
 				new TState(State.Slash1, () => !Weapon.IsAnimating ? ActionScoreRoll(50) : 0),
 				new TState(State.Reset, () => !Weapon.IsAnimating ? ActionScoreRoll(25) : 0),
-			], () => Weapon.QueueAnimation("slash-2"))}
+			], _ => Weapon.QueueAnimation("slash-2"))}
 		};
 	}
 }

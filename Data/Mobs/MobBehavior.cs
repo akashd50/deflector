@@ -7,9 +7,9 @@ namespace Deflector.Data.Mobs;
 
 public partial class MobBehavior: CharacterBody2D
 {
-	[Export] public int DetectionRange = 800;
+	[Export] public int DetectionRange = 400;
 	[Export] public int Aggressiveness = 50;
-	[Export] public int WalkSpeed = 30;
+	[Export] public int WalkSpeed = 15;
 	[Export] public int RunSpeed = 100;
 	[Export] public int RotationSpeed = 1;
 	
@@ -17,14 +17,14 @@ public partial class MobBehavior: CharacterBody2D
 	protected Vector2 WalkDirection = Vector2.Zero;
 	protected Vector2 FaceDirection = Vector2.Zero;
 	protected AnimatedSprite2D AnimatedSprite;
-	
+	protected StateMap WeaponStateMap;
+
 	private const int VisibleConeAngle = 45;
 	private const int AttackRange = 200;
 
 	private State _state;
 	private Player.Player _player;
 	private StateMap _stateMap;
-	private StateMap _weaponStateMap;
 	private ulong _lastPhysicsFrameTime = 0;
 	private Random _random;
 	
@@ -39,7 +39,7 @@ public partial class MobBehavior: CharacterBody2D
 		_player = player;
 		_state =  State.Idle;
 		_stateMap = GetStateMap();
-		_weaponStateMap = GetWeaponStateMap();
+		WeaponStateMap = GetWeaponStateMap();
 		FaceDirection = Vector2.Right.Rotated(Rotation);
 	}
 
@@ -51,7 +51,7 @@ public partial class MobBehavior: CharacterBody2D
 			_state = _stateMap.Execute(_state);			
 		// }
 
-		MoveAndSlide();
+		MoveAndCollide(Velocity * (float)delta);
 		ApplyDrag();
 	}
 
@@ -77,7 +77,7 @@ public partial class MobBehavior: CharacterBody2D
 				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(70) : 0),
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
-			], Tick: AttackPlayer, Exit: ResetAttack, ReEval: () => !Weapon.IsAttacking )},
+			], Tick: AttackPlayer, Exit: AttackPlayer, ReEval: () => !Weapon.IsAttacking )},
 		};
 	}
 
@@ -103,7 +103,7 @@ public partial class MobBehavior: CharacterBody2D
 		return true;
 	}
 	
-	protected bool GoToPlayer()
+	protected virtual bool GoToPlayer()
 	{
 		TrackPlayerIfNeeded();
 		var toPlayer = ToPlayer();
@@ -159,17 +159,10 @@ public partial class MobBehavior: CharacterBody2D
 	protected bool AttackPlayer()
 	{
 		Velocity = Vector2.Zero;
-		Weapon.State = _weaponStateMap.Execute(Weapon.State);
+		Weapon.State = WeaponStateMap.Execute(Weapon.State);
 		return true;
 	}
 
-	protected bool ResetAttack()
-	{
-		Weapon.State = State.Reset;
-		_weaponStateMap.SetToState(Weapon.State);
-		return true;
-	}
-	
 	protected bool IsWithinDetectionRange()
 	{
 		return ToPlayer().Length() <= DetectionRange;

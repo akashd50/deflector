@@ -12,8 +12,8 @@ public partial class Weapon: Node2D
 
 	private AnimationPlayer _animationPlayer;
 	
-	private AnimationAction<string> _queuedAnimationAction;
-	private AnimationAction<string> _currentAnimationAction;
+	public AnimationAction<string> QueuedAnimationAction { get; private set; }
+	public AnimationAction<string> CurrentAnimationAction { get; private set; }
 
 	[Signal]
 	public delegate void OnAnimationFinishedEventHandler(string name);
@@ -30,6 +30,7 @@ public partial class Weapon: Node2D
 
 		if (!_animationPlayer.HasAnimation(name))
 		{
+			GD.PrintErr("Animation doesn't exist: " + name);
 			return false;
 		}
 		
@@ -43,7 +44,7 @@ public partial class Weapon: Node2D
 	{
 		if (IsAnimating)
 		{
-			_queuedAnimationAction = new AnimationAction<string>()
+			QueuedAnimationAction = new AnimationAction<string>()
 			{
 				Data = name,
 				QueuedTime = Time.GetTicksMsec(),
@@ -53,7 +54,7 @@ public partial class Weapon: Node2D
 		}
 		else
 		{
-			_currentAnimationAction = new AnimationAction<string>()
+			CurrentAnimationAction = new AnimationAction<string>()
 			{
 				Data = name,
 				QueuedTime = Time.GetTicksMsec(),
@@ -82,18 +83,18 @@ public partial class Weapon: Node2D
 
 		EmitSignal(SignalName.OnAnimationFinished, name);
 		
-		if (_currentAnimationAction != null)
+		if (CurrentAnimationAction != null)
 		{
-			var callback = _currentAnimationAction.OnDone;
-			_currentAnimationAction = null;
+			var callback = CurrentAnimationAction.OnDone;
+			CurrentAnimationAction = null;
 			callback?.Invoke();
 		}
 
-		if (_queuedAnimationAction != null && (_queuedAnimationAction.PlayAlways || Time.GetTicksMsec() - _queuedAnimationAction.QueuedTime < 500))
+		if (QueuedAnimationAction != null && (QueuedAnimationAction.PlayAlways || Time.GetTicksMsec() - QueuedAnimationAction.QueuedTime < 500))
 		{
-			_currentAnimationAction = _queuedAnimationAction;
-			PlayAnimation(_currentAnimationAction.Data);
-			_queuedAnimationAction = null;
+			CurrentAnimationAction = QueuedAnimationAction;
+			PlayAnimation(CurrentAnimationAction.Data);
+			QueuedAnimationAction = null;
 		}
 	}
 }

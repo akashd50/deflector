@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Deflector.Data.Shared;
 using Godot;
 
 namespace Deflector.Data.Player;
@@ -18,12 +19,12 @@ public class PlayerHelper(Player player)
 	private Vector2 _walkDirection = Vector2.Zero;
 	private Vector2 _faceDirection = Vector2.Zero;
 	
-	
 	// Deflection
 	private bool _isDeflecting = false;
 	private ulong _deflectStarted = 0;
 	private const int DeflectDuration = 200;
-
+	private StateMap _weaponStateMap;
+	
 	// lock on
 	private CharacterBody2D _lockedOnEnemy;
 
@@ -31,16 +32,6 @@ public class PlayerHelper(Player player)
 	{
 		player.DeflectIndicator.Hide();
 		player.DeflectIndicator.AnimationFinished += () => player.DeflectIndicator.Hide();
-		/*player.Weapon.OnAnimationFinished += (string name) =>
-		{
-			switch (name)
-			{
-				case "stop-blocking":
-				{
-					_isDeflecting = false;
-				},
-			};
-		};*/
 	}
 	
 	public bool HandleDash(InputEvent @event)
@@ -108,7 +99,22 @@ public class PlayerHelper(Player player)
 	{
 		if (!player.Weapon.IsAttacking && @event.IsActionPressed("attack"))
 		{
-			player.Weapon.QueueAnimation("slash-1");
+			if (player.Weapon.State == State.Slash2 || player.Weapon.State == State.Reset)
+			{
+				player.Weapon.QueueAnimation("slash-1", () =>
+				{
+					player.Weapon.State = State.Slash1;
+					return true;
+				});
+			} else if (player.Weapon.State == State.Slash1)
+			{
+				player.Weapon.QueueAnimation("slash-2", () =>
+				{
+					player.Weapon.State = State.Slash2;
+					return true;
+				});
+			}
+			
 			return true;
 		}
 		return false;

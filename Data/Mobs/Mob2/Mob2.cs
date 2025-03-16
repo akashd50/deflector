@@ -33,7 +33,7 @@ public partial class Mob2: MobBehavior, IDamageable
 				new TState(State.Wary, () => ActionScoreRoll(50)),
 				new TState(State.GoingToPlayer, () => IsWithinVisibleRegion() ? ActionScoreRoll(25) : 0),
 				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
-			], Tick: ActWary)},
+			], Enter: ReadyStance, Tick: ActWary)},
 			{State.GoingToPlayer, new StateInfo([
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(60) : 0),
 				new TState(State.Wary, () => ActionScoreRoll(60)),
@@ -44,8 +44,24 @@ public partial class Mob2: MobBehavior, IDamageable
 				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(70) : 0),
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
-			], Tick: AttackPlayer, Exit: ResetAttack, ReEval: () => !Weapon.IsAttacking )},
+			], Tick: AttackPlayer, Exit: AttackPlayer, ReEval: () => !Weapon.IsAttacking )},
 		};
+	}
+
+	private bool ReadyStance(State fromState)
+	{
+		if (fromState != State.Idle)
+		{
+			return false;
+		}
+		
+		if (Weapon.State != State.Ready)
+		{
+			WeaponStateMap.SetToState(State.Ready, Weapon.State);
+			Weapon.State = State.Ready;
+		}
+
+		return true;
 	}
 	
 	protected override StateMap GetWeaponStateMap()
@@ -53,19 +69,27 @@ public partial class Mob2: MobBehavior, IDamageable
 		return new StateMap(0)
 		{
 			{ State.Reset, new StateInfo([
-				new TState(State.RToSlash1Start, () => !Weapon.IsAnimating && IsWithinAttackRange() ? ActionScoreRoll(100) : 0),
-			], () => Weapon.ResetAnimation())},
-			{ State.RToSlash1Start, new StateInfo([
-				new TState(State.Slash1, () => !Weapon.IsAnimating ? ActionScoreRoll(25) : 0),
-			], () => Weapon.QueueAnimation("reset-to-slash-lr"))},
+				new TState(State.Ready, () => !Weapon.IsAnimating && IsWithinDetectionRange() ? ActionScoreRoll(100) : 0),
+			], _ => Weapon.ResetAnimation())},
+			{ State.Ready, new StateInfo([
+				new TState(State.Slash1, () => !Weapon.IsAnimating && IsWithinAttackRange() ? ActionScoreRoll(100) : 0),
+			], (State fromState) =>
+			{
+				return fromState switch
+				{
+					State.Reset => Weapon.QueueAnimation("reset-to-ready"),
+					State.Slash1 => Weapon.QueueAnimation("slash-1-to-ready"),
+					_ => true,
+				};
+			})},
 			{ State.Slash1, new StateInfo([
-				new TState(State.Slash2, () => !Weapon.IsAnimating ? ActionScoreRoll(80) : 0),
-				new TState(State.Reset, () => !Weapon.IsAnimating ? ActionScoreRoll(25) : 0),
-			], () => Weapon.QueueAnimation("slash-1"))},
+				new TState(State.Slash2, () => !Weapon.IsAnimating && IsWithinAttackRange() ? ActionScoreRoll(80) : 0),
+				new TState(State.Ready, () => !Weapon.IsAnimating && !IsWithinAttackRange() ? ActionScoreRoll(100) : 0),
+			], _ => Weapon.QueueAnimation("slash-1"))},
 			{ State.Slash2, new StateInfo([
-				new TState(State.Slash1, () => !Weapon.IsAnimating ? ActionScoreRoll(50) : 0),
-				new TState(State.Reset, () => !Weapon.IsAnimating ? ActionScoreRoll(25) : 0),
-			], () => Weapon.QueueAnimation("slash-2"))}
+				new TState(State.Slash1, () => !Weapon.IsAnimating && IsWithinAttackRange() ? ActionScoreRoll(50) : 0),
+				new TState(State.Ready, () => !Weapon.IsAnimating && !IsWithinAttackRange() ? ActionScoreRoll(100) : 0),
+			], _ => Weapon.QueueAnimation("slash-2"))}
 		};
 	}
 }

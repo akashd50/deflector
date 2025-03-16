@@ -400,6 +400,8 @@ _data = {
 
 [node name="Mob1" type="CharacterBody2D"]
 script = ExtResource("1_duqgd")
+DetectionRange = 800
+WalkSpeed = 30
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(1.00532, 0.995729)

@@ -9,6 +9,7 @@ public enum State
     Attacking,
     
     Reset,
+    Ready,
     RToSlash1Start,
     Slash1,
     Slash2,

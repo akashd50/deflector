@@ -8,7 +8,7 @@ public class StateMap : Dictionary<State, StateInfo>
 {
 	private ulong _lastTransitionCheck = 0;
 	private readonly double _timeBetweenTransitionChecks = 0;
-	
+	public State State { get; private set; }
 	
 	public StateMap(double timeBetweenTransitionChecks) : base()
 	{
@@ -56,7 +56,7 @@ public class StateMap : Dictionary<State, StateInfo>
 				if (newState != lastState)
 				{
 					stateInfo.Exit?.Invoke();
-					this[newState].Enter?.Invoke();
+					this[newState].Enter?.Invoke(lastState);
 				}
 			   
 				break;
@@ -66,7 +66,7 @@ public class StateMap : Dictionary<State, StateInfo>
 				if (newState != lastState)
 				{
 					stateInfo.Exit?.Invoke();
-					this[newState].Enter?.Invoke();
+					this[newState].Enter?.Invoke(lastState);
 				}
 				break;
 		}
@@ -99,9 +99,9 @@ public class StateMap : Dictionary<State, StateInfo>
 		return highestRankedState;
 	}
 
-	public void SetToState(State newState)
+	public void SetToState(State newState, State oldState)
 	{
 		var stateInfo = this[newState];
-		stateInfo.Enter?.Invoke();
+		stateInfo.Enter?.Invoke(oldState);
 	}
 }
