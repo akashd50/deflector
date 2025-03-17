@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Deflector.Data.Shared;
 using Deflector.Data.Weapons;
 using Godot;
@@ -18,7 +19,9 @@ public partial class MobBehavior: CharacterBody2D
 	protected Vector2 FaceDirection = Vector2.Zero;
 	protected AnimatedSprite2D AnimatedSprite;
 	protected StateMap WeaponStateMap;
-
+	protected ulong LastWeaponAttackFinishTime = 0;
+	protected ulong CurrentWeaponCooldownTime = 0;
+	
 	private const int VisibleConeAngle = 45;
 	private const int AttackRange = 200;
 
@@ -65,20 +68,25 @@ public partial class MobBehavior: CharacterBody2D
 			{State.Wary, new StateInfo([
 				new TState(State.Wary, () => ActionScoreRoll(50)),
 				new TState(State.GoingToPlayer, () => IsWithinVisibleRegion() ? ActionScoreRoll(25) : 0),
-				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
+				new TState(State.Attacking, () => IsWithinAttackRange() && IsWeaponCooldownOver() ? ActionScoreRoll(25) : 0),
 			], Tick: ActWary)},
 			{State.GoingToPlayer, new StateInfo([
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(60) : 0),
 				new TState(State.Wary, () => ActionScoreRoll(60)),
-				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
+				new TState(State.Attacking, () => IsWithinAttackRange() && IsWeaponCooldownOver() ? ActionScoreRoll(25) : 0),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
 			], Tick: GoToPlayer)},
 			{State.Attacking, new StateInfo([
-				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(70) : 0),
+				new TState(State.Attacking, () => IsWithinAttackRange() && IsWeaponCooldownOver() ? ActionScoreRoll(70) : 0),
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
 			], Tick: AttackPlayer, Exit: AttackPlayer, ReEval: () => !Weapon.IsAttacking )},
 		};
+	}
+
+	protected bool IsWeaponCooldownOver()
+	{
+		return Time.GetTicksMsec() - LastWeaponAttackFinishTime > CurrentWeaponCooldownTime;
 	}
 
 	protected virtual StateMap GetWeaponStateMap()
@@ -159,7 +167,10 @@ public partial class MobBehavior: CharacterBody2D
 	protected bool AttackPlayer()
 	{
 		Velocity = Vector2.Zero;
-		Weapon.State = WeaponStateMap.Execute(Weapon.State);
+		// if (Time.GetTicksMsec() - LastWeaponAttackFinishTime > CurrentWeaponCooldownTime)
+		// {
+			Weapon.State = WeaponStateMap.Execute(Weapon.State);
+		// }
 		return true;
 	}
 

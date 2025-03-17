@@ -1,4 +1,5 @@
-﻿using Deflector.Data.Shared;
+﻿using System.Collections.Generic;
+using Deflector.Data.Shared;
 using Deflector.Data.Weapons;
 using Godot;
 
@@ -8,13 +9,12 @@ public partial class Mob2: MobBehavior, IDamageable
 {
 	public override void _Ready()
 	{
+		Weapon = GetNode<Weapon>("MobWeapon");
 		var playerNode = GetTree().GetFirstNodeInGroup("player");
 		if (playerNode is Player.Player player)
 		{
 			Init(player);
 		}
-		
-		Weapon = GetNode<Weapon>("MobWeapon");
 	}
 
 	public void TakeDamage(int damage)
@@ -32,16 +32,16 @@ public partial class Mob2: MobBehavior, IDamageable
 			{State.Wary, new StateInfo([
 				new TState(State.Wary, () => ActionScoreRoll(50)),
 				new TState(State.GoingToPlayer, () => IsWithinVisibleRegion() ? ActionScoreRoll(25) : 0),
-				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
+				new TState(State.Attacking, () => IsWithinAttackRange() && IsWeaponCooldownOver() ? ActionScoreRoll(25) : 0),
 			], Enter: ReadyStance, Tick: ActWary)},
 			{State.GoingToPlayer, new StateInfo([
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(60) : 0),
 				new TState(State.Wary, () => ActionScoreRoll(60)),
-				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
+				new TState(State.Attacking, () => IsWithinAttackRange() && IsWeaponCooldownOver() ? ActionScoreRoll(25) : 0),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
 			], Tick: GoToPlayer)},
 			{State.Attacking, new StateInfo([
-				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(70) : 0),
+				new TState(State.Attacking, () => IsWithinAttackRange() && IsWeaponCooldownOver() ? ActionScoreRoll(70) : 0),
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
 			], Tick: AttackPlayer, Exit: AttackPlayer, ReEval: () => !Weapon.IsAttacking )},
@@ -78,7 +78,7 @@ public partial class Mob2: MobBehavior, IDamageable
 				return fromState switch
 				{
 					State.Reset => Weapon.QueueAnimation("reset-to-ready"),
-					State.Slash1 => Weapon.QueueAnimation("slash-1-to-ready"),
+					State.Slash1 => QueueAnimationAndSetCooldown("slash-1-to-ready", 0),
 					_ => true,
 				};
 			})},
@@ -91,5 +91,12 @@ public partial class Mob2: MobBehavior, IDamageable
 				new TState(State.Ready, () => !Weapon.IsAnimating && !IsWithinAttackRange() ? ActionScoreRoll(100) : 0),
 			], _ => Weapon.QueueAnimation("slash-2"))}
 		};
+	}
+
+	private bool QueueAnimationAndSetCooldown(string name, ulong cooldown)
+	{
+		LastWeaponAttackFinishTime = Time.GetTicksMsec();
+		CurrentWeaponCooldownTime = cooldown;
+		return Weapon.QueueAnimation(name);
 	}
 }
