@@ -22,6 +22,7 @@ public class StateMap : Dictionary<State, StateInfo>
 
 		if (stateInfo.ReEval != null && !stateInfo.ReEval())
 		{
+			stateInfo.Tick?.Invoke();
 			return newState;
 		}
 
@@ -35,8 +36,15 @@ public class StateMap : Dictionary<State, StateInfo>
 		
 		if (newState == currentState)
 		{
-			stateInfo.Tick?.Invoke();   
-		}
+			if (this[newState].Tick == null)
+			{
+				this[newState].Enter?.Invoke(currentState);
+			}
+			else
+			{
+				this[newState].Tick?.Invoke();   
+			}
+		} 
 
 		return newState;
 	}
@@ -90,7 +98,7 @@ public class StateMap : Dictionary<State, StateInfo>
 		var highestRankedState = State.Null;
 		foreach (var stateScore in stateScores)
 		{
-			if (stateScore.Value > maxScore)
+			if (stateScore.Value >= maxScore)
 			{
 				maxScore = stateScore.Value;
 				highestRankedState = stateScore.Key;

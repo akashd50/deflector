@@ -38,7 +38,7 @@ public partial class Mob1: MobBehavior, IDamageable
 				new TState(State.Wary, () => ActionScoreRoll(60)),
 				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
-			], Tick: GoToPlayer)},
+			], Tick: GoToPlayerIfOutsideAttackRange)},
 			{State.Attacking, new StateInfo([
 				new TState(State.Attacking, () => IsWithinAttackRange() ? ActionScoreRoll(70) : 0),
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(25) : 0),

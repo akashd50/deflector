@@ -13,7 +13,9 @@ public partial class MobBehavior: CharacterBody2D
 	[Export] public int WalkSpeed = 15;
 	[Export] public int RunSpeed = 100;
 	[Export] public int RotationSpeed = 1;
-	
+	[Export] public int AttackRange = 150;
+	[Export] public int VisibleConeAngle = 45;
+
 	protected Weapon Weapon;
 	protected Vector2 WalkDirection = Vector2.Zero;
 	protected Vector2 FaceDirection = Vector2.Zero;
@@ -22,9 +24,9 @@ public partial class MobBehavior: CharacterBody2D
 	protected ulong LastWeaponAttackFinishTime = 0;
 	protected ulong CurrentWeaponCooldownTime = 0;
 	
-	private const int VisibleConeAngle = 45;
-	private const int AttackRange = 200;
-
+	protected bool ChasePlayerDuringAttack = false;
+	
+	
 	private State _state;
 	private Player.Player _player;
 	private StateMap _stateMap;
@@ -36,7 +38,7 @@ public partial class MobBehavior: CharacterBody2D
 		AddToGroup("Enemies");
 		AddToGroup("Persist");
 
-		AnimatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		// AnimatedSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		
 		_random = new Random();
 		_player = player;
@@ -75,7 +77,7 @@ public partial class MobBehavior: CharacterBody2D
 				new TState(State.Wary, () => ActionScoreRoll(60)),
 				new TState(State.Attacking, () => IsWithinAttackRange() && IsWeaponCooldownOver() ? ActionScoreRoll(25) : 0),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
-			], Tick: GoToPlayer)},
+			], Tick: GoToPlayerIfOutsideAttackRange)},
 			{State.Attacking, new StateInfo([
 				new TState(State.Attacking, () => IsWithinAttackRange() && IsWeaponCooldownOver() ? ActionScoreRoll(70) : 0),
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
@@ -111,19 +113,15 @@ public partial class MobBehavior: CharacterBody2D
 		return true;
 	}
 	
-	protected virtual bool GoToPlayer()
+	protected virtual bool GoToPlayerIfOutsideAttackRange()
 	{
 		TrackPlayerIfNeeded();
 		var toPlayer = ToPlayer();
 		if (toPlayer.Length() > AttackRange)
 		{
-			WalkDirection = FaceDirection;
-			Velocity += WalkDirection * RunSpeed;
-			ClampVelocity(RunSpeed);		
-			return false;
+			GoToPlayer(RunSpeed);
 		}
 
-		Velocity = Vector2.Zero;
 		return true;
 	}
 
@@ -166,11 +164,16 @@ public partial class MobBehavior: CharacterBody2D
 
 	protected bool AttackPlayer()
 	{
-		Velocity = Vector2.Zero;
-		// if (Time.GetTicksMsec() - LastWeaponAttackFinishTime > CurrentWeaponCooldownTime)
-		// {
+		if (ChasePlayerDuringAttack)
+		{
+			TrackPlayerIfNeeded();
+			GoToPlayerIfOutsideAttackRange();
+		}
+
+		if (!Weapon.IsAnimating)
+		{
 			Weapon.State = WeaponStateMap.Execute(Weapon.State);
-		// }
+		}
 		return true;
 	}
 
@@ -189,6 +192,32 @@ public partial class MobBehavior: CharacterBody2D
 	{
 		return _random.Next(minScore, 101);
 	}
+	
+	protected bool QueueAnimationAndSetCooldown(string name, ulong cooldown)
+	{
+		LastWeaponAttackFinishTime = Time.GetTicksMsec();
+		CurrentWeaponCooldownTime = cooldown;
+		return Weapon.QueueAnimation(name);
+	}
+	
+	protected bool QueueAnimationAndChase(string name)
+	{
+		ChasePlayerDuringAttack = true;
+		return Weapon.QueueAnimation(name);
+	}
+	
+	protected bool StopChase()
+	{
+		ChasePlayerDuringAttack = false;
+		return true;
+	}
+	
+	private void GoToPlayer(int speed)
+	{
+		WalkDirection = FaceDirection;
+		Velocity += WalkDirection * speed;
+		ClampVelocity(speed);		
+	}
 
 	private void ApplyDrag()
 	{
@@ -197,7 +226,7 @@ public partial class MobBehavior: CharacterBody2D
 			return;
 		}
 
-		if (Math.Abs(Velocity.X) < 5 && Math.Abs(Velocity.Y) < 5)
+		if (Math.Abs(Velocity.X) < 1 && Math.Abs(Velocity.Y) < 1)
 		{
 			Velocity = Vector2.Zero;
 			return;

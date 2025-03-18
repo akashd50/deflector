@@ -13,4 +13,8 @@ public enum State
     RToSlash1Start,
     Slash1,
     Slash2,
+    Slash3,
+    Slash4,
+    SpinAttackStart,
+    SpinAttackLoop,
 }
