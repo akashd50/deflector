@@ -141,6 +141,7 @@ shape = SubResource("RectangleShape2D_q7845")
 [node name="WeaponSword" parent="." instance=ExtResource("4_feiwi")]
 
 [node name="DeflectIndicator" type="AnimatedSprite2D" parent="."]
+z_index = 1
 position = Vector2(38, 1)
 scale = Vector2(0.7, 0.695)
 sprite_frames = SubResource("SpriteFrames_j2u4r")

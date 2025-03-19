@@ -41,10 +41,11 @@ public partial class Mob2: MobBehavior, IDamageable
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
 			], Tick: GoToPlayerIfOutsideAttackRange)},
 			{State.Attacking, new StateInfo([
-				new TState(State.Attacking, () => IsWeaponCooldownOver() ? ActionScoreRoll(70) : 0),
+				new TState(State.Attacking, () => IsWeaponCooldownOver() ? ActionScoreRoll(50) : 0),
 				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
+				new TState(State.Wary, () => ActionScoreRoll(50)),
 				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
-			], Tick: AttackPlayer, Exit: AttackPlayer, ReEval: () => !Weapon.IsAttacking )},
+			], Tick: AttackPlayer, ReEval: () => !Weapon.IsAnimating && IsWeaponInReadyState())},
 		};
 	}
 
@@ -66,7 +67,7 @@ public partial class Mob2: MobBehavior, IDamageable
 	
 	protected override StateMap GetWeaponStateMap()
 	{
-		return new StateMap(0)
+		return new StateMap(100, true)
 		{
 			{ State.Reset, new StateInfo([
 				new TState(State.Ready, () => !Weapon.IsAnimating && IsWithinDetectionRange() ? ActionScoreRoll(100) : 0),
@@ -74,6 +75,7 @@ public partial class Mob2: MobBehavior, IDamageable
 			{ State.Ready, new StateInfo([
 				new TState(State.Slash1, () => !Weapon.IsAnimating && IsWithinAttackRange() ? ActionScoreRoll(50) : 0),
 				new TState(State.SpinAttackStart, () => !Weapon.IsAnimating ? ActionScoreRoll(50) : 0),
+				new TState(State.StabStart, () => !Weapon.IsAnimating && IsOverAttackRange() ? ActionScoreRoll(50) : 0),
 			], (State fromState) =>
 			{
 				return fromState switch
@@ -82,9 +84,8 @@ public partial class Mob2: MobBehavior, IDamageable
 					State.Slash1 => QueueAnimationAndSetCooldown("slash-1-to-ready", 0),
 					State.Slash2 => QueueAnimationAndSetCooldown("slash-2-to-ready", 0),
 					State.Slash4 => QueueAnimationAndSetCooldown("slash-4-to-ready", 0),
-					State.SpinAttackStart => QueueAnimationAndSetCooldown("spin-attack-to-ready", 0),
-					State.SpinAttackLoop => QueueAnimationAndSetCooldown("spin-attack-to-ready", 0),
-					_ => true,
+					State.SpinAttackStart or State.SpinAttackLoop => QueueAnimationAndSetCooldown("spin-attack-to-ready", 0),
+					_ => Weapon.QueueAnimation("reset-to-ready"),
 				};
 			})},
 			{ State.Slash1, new StateInfo([
@@ -108,6 +109,12 @@ public partial class Mob2: MobBehavior, IDamageable
 				new TState(State.SpinAttackLoop, () => !Weapon.IsAnimating ? ActionScoreRoll(60) : 0),
 				new TState(State.Ready, () => !Weapon.IsAnimating ? ActionScoreRoll(30) : 0),
 			], _ => QueueAnimationAndChase("spin-attack-loop"), Exit: StopChase)},
+			{ State.StabStart, new StateInfo([
+				new TState(State.Stab, () => 100),
+			], _ => QueueAnimationAndTrackPlayer("stab-start"), Exit: StopTrack)},
+			{ State.Stab, new StateInfo([
+				new TState(State.Ready, () => 100),
+			], _ => QueueAnimationAndDashToPlayer("stab"), Exit: StopDash)},
 		};
 	}
 }

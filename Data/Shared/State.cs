@@ -17,4 +17,6 @@ public enum State
     Slash4,
     SpinAttackStart,
     SpinAttackLoop,
+    StabStart,
+    Stab,
 }

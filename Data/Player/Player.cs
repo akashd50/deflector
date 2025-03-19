@@ -31,7 +31,7 @@ public partial class Player : CharacterBody2D
 		_playerHelper.UpdateVelocity();
 		
 		SetParameters();
-		MoveAndCollide(Velocity * (float)delta);
+		MoveAndSlide();
 	}
 
 	public override void _ShortcutInput(InputEvent e)

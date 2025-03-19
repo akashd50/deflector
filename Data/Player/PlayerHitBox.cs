@@ -1,12 +1,13 @@
+using Deflector.Data.Shared;
 using Godot;
 
 namespace Deflector.Data.Player;
 
-public partial class PlayerHitBox: Area2D
+public partial class PlayerHitBox: GenericHitBox
 {
 	[Export] public int Damage = 10;
 
-	public PlayerHitBox()
+	public PlayerHitBox(): base()
 	{
 		CollisionLayer = 2;
 		CollisionMask = 4;

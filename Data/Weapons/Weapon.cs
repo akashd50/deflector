@@ -1,4 +1,5 @@
 using System;
+using Deflector.Data.Mobs;
 using Deflector.Data.Shared;
 using Godot;
 
@@ -9,7 +10,8 @@ public partial class Weapon: Node2D
 	public bool IsAttacking { get; private set; } = false;
 	public bool IsAnimating { get; private set; }  = false;
 	public State State { get; set; } = State.Reset;
-
+	public GenericHitBox WeaponHitBox;
+	
 	private AnimationPlayer _animationPlayer;
 	
 	public AnimationAction<string> QueuedAnimationAction { get; private set; }
@@ -20,6 +22,7 @@ public partial class Weapon: Node2D
 	
 	public override void _Ready()
 	{
+		WeaponHitBox = GetNode<GenericHitBox>("./WeaponSprite/WeaponHitBox");
 		_animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
 		_animationPlayer.Connect("animation_finished", Callable.From((string name) => AnimationFinished(name)));
 	}
@@ -76,25 +79,31 @@ public partial class Weapon: Node2D
 	private void AnimationFinished(string name)
 	{
 		GD.Print("Finished: ", name);
-		IsAnimating = false;
-		IsAttacking = false;
+		
 
-		if (name == "RESET") return;
+		if (name == "RESET")
+		{
+			IsAnimating = false;
+			IsAttacking = false;
+			return;
+		}
 
 		EmitSignal(SignalName.OnAnimationFinished, name);
-		
 		if (CurrentAnimationAction != null)
 		{
 			var callback = CurrentAnimationAction.OnDone;
 			CurrentAnimationAction = null;
 			callback?.Invoke();
 		}
+		
+		IsAnimating = false;
+		IsAttacking = false;
 
 		if (QueuedAnimationAction != null && (QueuedAnimationAction.PlayAlways || Time.GetTicksMsec() - QueuedAnimationAction.QueuedTime < 500))
 		{
 			CurrentAnimationAction = QueuedAnimationAction;
-			PlayAnimation(CurrentAnimationAction.Data);
 			QueuedAnimationAction = null;
+			PlayAnimation(CurrentAnimationAction.Data);
 		}
 	}
 }
