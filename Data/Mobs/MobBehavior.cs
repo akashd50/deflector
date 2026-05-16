@@ -1,4 +1,5 @@
 using System;
+using Deflector.Data.BehaviorTree;
 using Deflector.Data.Shared;
 using Deflector.Data.Weapons;
 using Godot;
@@ -61,11 +62,12 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 
 	protected MobBlackboard Blackboard;
 
-	private State _state;
+	private State         _state;
 	private Player.Player _player;
-	private StateMap _stateMap;
-	private Random _random;
-
+	private StateMap      _stateMap;
+	private Random        _random;
+	private BTNode        _treeRoot;
+	
 	protected Player.Player TryGetPlayer()
 	{
 		if (_player == null && GetTree().GetFirstNodeInGroup("Player") is Player.Player player)
@@ -88,10 +90,16 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 		_state =  State.Idle;
 		Blackboard = new MobBlackboard { AttackBudget = MaxAttackBudget };
 		Blackboard.OnStateEntered();
-		_stateMap       = GetStateMap();
+		// _stateMap       = GetStateMap();
 		WeaponStateMap  = GetWeaponStateMap();
 		FaceDirection   = Vector2.Right.Rotated(Rotation);
 		MobWeaponsGroup = GetNode<MobWeaponsGroup>("WeaponsGroup");
+		_treeRoot       = BuildBehavioralTree();
+	}
+
+	protected virtual BTNode BuildBehavioralTree()
+	{
+		return new Selector([]);
 	}
 
 	protected virtual void OnHitDone()
@@ -109,8 +117,44 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 		MoveAndCollide(Velocity * (float)delta);
 		ApplyDrag();
 	}
+	
+	// ----------------------------------------------------------------------------------------------------------------
+	// Behavior tree methods
+	// ----------------------------------------------------------------------------------------------------------------
 
-	private void UpdateAwareness(float delta)
+	protected NodeState HasSomethingToInvestigate()
+	{
+		return Blackboard.Awareness >= WaryThreshold ? NodeState.Success : NodeState.Failure;
+	}
+	
+	protected NodeState Investigate()
+	{
+		if (Blackboard.LastKnownPlayerPos == null)
+		{
+			return NodeState.Failure;
+		}
+
+		if (HasArrivedAtLastKnown())
+		{
+			return NodeState.Success;
+		}
+
+		TrackTowards(Blackboard.LastKnownPlayerPos.Value, RotationSpeed);
+		GoTo(Blackboard.LastKnownPlayerPos.Value, WalkSpeed);
+		return NodeState.Running;
+	}
+	
+	protected NodeState SearchAreaLookAround()
+	{
+		// Needs work
+		LookAroundSlow();
+
+		return NodeState.Success;
+	}
+
+	// ----------------------------------------------------------------------------------------------------------------
+
+	protected void UpdateAwareness(float delta)
 	{
 		var toPlayer = ToPlayer();
 		var dist = toPlayer.Length();
@@ -136,7 +180,7 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 
 	// ---------- State map ----------
 
-	protected virtual StateMap GetStateMap()
+	/*protected virtual StateMap GetStateMap()
 	{
 		// 200ms transition cadence: fast enough to feel reactive, slow enough
 		// that a state commits long enough for movement to actually express it.
@@ -178,7 +222,7 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 			], Enter: OnEnterReposition, Tick: TickReposition,
 				ReEval: () => Blackboard.NowMs >= Blackboard.RepositionUntilMs) },
 		};
-	}
+	}*/
 
 	protected virtual bool IsAttacking()
 	{
@@ -261,12 +305,12 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 
 	private int Jitter(int value) => Math.Max(0, value + _random.Next(-3, 4));
 
-	private int ScoreIdle()
+	/*private int ScoreIdle()
 	{
 		return Blackboard.Awareness < ForgetThreshold ? 80 : 0;
 	}
 
-	private int ScoreWaryFromIdle()
+	protected int ScoreWaryFromIdle()
 	{
 		return Blackboard.Awareness >= WaryThreshold ? 50 : 0;
 	}
@@ -316,29 +360,7 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 	private int ScoreWaryFromReposition()
 	{
 		return Blackboard.Awareness < AggroThreshold && Blackboard.Awareness >= WaryThreshold ? 50 : 0;
-	}
-
-	private int ScoreAttack()
-	{
-		if (!IsWithinAttackRange()) return 0;
-		if (!IsWeaponCooldownOver()) return 0;
-		if (Blackboard.AttackBudget <= 0) return 0;
-		if (!IsPlayerVisible() && Blackboard.Awareness < AggroThreshold) return 0;
-		return Jitter(70 + (int)(Aggressiveness * 25));
-	}
-
-	private int ScoreReposition()
-	{
-		if (Blackboard.AttackBudget <= 0) return 90;
-		if (!IsWithinAttackRange()) return 30;
-		return 0;
-	}
-
-	private int ScoreResumeChase()
-	{
-		if (!IsWithinAttackRange() && Blackboard.AttackBudget > 0) return 50;
-		return 0;
-	}
+	}*/
 
 	// ---------- Tick handlers ----------
 
@@ -349,7 +371,7 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 
 	private bool TickWary()
 	{
-		TrackPlayerIfNeeded();
+		TrackPointIfNeeded(TryGetPlayer().GlobalPosition);
 		LeashedWander(WalkSpeed);
 		return true;
 	}
@@ -375,14 +397,14 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 
 	private bool TickGoToPlayer()
 	{
-		TrackPlayerIfNeeded();
+		TrackPointIfNeeded(TryGetPlayer().GlobalPosition);
 		ApproachToRange(TryGetPlayer().GlobalPosition, (int)MobWeaponsGroup.GetRandomWeaponRange(), RunSpeed);
 		return true;
 	}
 
 	private bool TickReposition()
 	{
-		TrackPlayerIfNeeded();
+		TrackPointIfNeeded(TryGetPlayer().GlobalPosition);
 		StrafeAroundPlayer(PreferredCombatRange, WalkSpeed * 2);
 		return true;
 	}
@@ -506,11 +528,11 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 		return IsPlayerVisible();
 	}
 
-	protected virtual bool GoToPlayerIfOutsideAttackRange()
+	protected virtual bool GoToPlayerIfOutsideAttackRange(int range)
 	{
-		TrackPlayerIfNeeded();
+		TrackPointIfNeeded(TryGetPlayer().GlobalPosition);
 		var toPlayer = ToPlayer();
-		if (toPlayer.Length() > AttackRange)
+		if (toPlayer.Length() > range)
 		{
 			GoToPlayer(RunSpeed);
 		}
@@ -520,20 +542,20 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 
 	protected bool ActWary()
 	{
-		TrackPlayerIfNeeded();
+		TrackPointIfNeeded(TryGetPlayer().GlobalPosition);
 		LeashedWander(WalkSpeed);
 		return true;
 	}
 
-	private bool TrackPlayerIfNeeded()
+	private bool TrackPointIfNeeded(Vector2 pos)
 	{
-		TrackPlayer(RotationSpeed);
+		TrackPoint(pos, RotationSpeed);
 		return true;
 	}
 
-	private void TrackPlayer(int rotationSpeed)
+	private void TrackPoint(Vector2 pos, int rotationSpeed)
 	{
-		TrackTowards(TryGetPlayer().GlobalPosition, rotationSpeed);
+		TrackTowards(pos, rotationSpeed);
 	}
 
 	private void TrackTowards(Vector2 worldPos, int rotationSpeed)
@@ -550,13 +572,13 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 	{
 		if (ChasePlayerDuringAttack)
 		{
-			TrackPlayerIfNeeded();
-			GoToPlayerIfOutsideAttackRange();
+			TrackPointIfNeeded(TryGetPlayer().GlobalPosition);
+			GoToPlayerIfOutsideAttackRange(0);
 		}
 
 		if (TrackPlayerDuringAttack)
 		{
-			TrackPlayer(RotationSpeed * 3);
+			TrackPoint(TryGetPlayer().GlobalPosition, RotationSpeed * 3);
 		}
 
 		if (DashToPlayerDuringAttack)
@@ -577,17 +599,7 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 	{
 		return ToPlayer().Length() <= DetectionRange;
 	}
-
-	protected bool IsWithinAttackRange()
-	{
-		return IsWithinRange(AttackRange);
-	}
-
-	protected bool IsOverAttackRange()
-	{
-		return IsGreaterThanRange(AttackRange);
-	}
-
+	
 	protected bool IsWithinRange(int range)
 	{
 		return ToPlayer().Length() <= range;
@@ -678,5 +690,10 @@ public partial class MobBehavior: CharacterBody2D, IUsesAnimationHelper
 	private Vector2 ToPlayer()
 	{
 		return TryGetPlayer().GlobalPosition - GlobalPosition;
+	}
+	
+	private Vector2 ToPlace(Vector2 pos)
+	{
+		return pos - GlobalPosition;
 	}
 }
