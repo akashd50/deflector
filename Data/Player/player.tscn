@@ -33,9 +33,6 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vol7m"]
 size = Vector2(255.26385, 255.04419)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_q7845"]
-size = Vector2(57, 58)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_j2u4r"]
 animations = [{
 "frames": [{
@@ -125,9 +122,8 @@ radius = 65.0
 script = ExtResource("1_633ct")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=80477693]
-position = Vector2(0.29729366, 0.07432167)
 rotation = -1.5707964
-scale = Vector2(0.22478639, 0.22199138)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_hworc")
 script = ExtResource("3_b21lg")
 
@@ -139,10 +135,10 @@ position = Vector2(1.8996782, -0.90029836)
 scale = Vector2(0.9999999, 1.0000002)
 shape = SubResource("RectangleShape2D_vol7m")
 
-[node name="PlayerCollisionShape" type="CollisionShape2D" parent="." unique_id=1549097112]
-shape = SubResource("RectangleShape2D_q7845")
-
 [node name="WeaponSword" parent="." unique_id=666540428 instance=ExtResource("4_feiwi")]
+
+[node name="PlayerCollisionShape" type="CollisionPolygon2D" parent="." unique_id=21023248]
+polygon = PackedVector2Array(-26, -26, 26, 0, -26, 26)
 
 [node name="DeflectIndicator" type="AnimatedSprite2D" parent="." unique_id=438427473]
 z_index = 10

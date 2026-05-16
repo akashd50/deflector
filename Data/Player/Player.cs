@@ -8,7 +8,7 @@ namespace Deflector.Data.Player;
 public partial class Player : CharacterBody2D
 {
 	[Export]
-	public int Speed = 100;
+	public int Speed = 300;
 	
 	public PlayerHurtBox PlayerHurtBox { get; private set; }
 	public AnimatedSprite2D DeflectIndicator;

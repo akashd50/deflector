@@ -1,3 +1,4 @@
+using Deflector.Data.BehaviorTree;
 using Deflector.Data.Shared;
 using Deflector.Data.Weapons;
 using Godot;
@@ -20,24 +21,35 @@ public partial class Mob1: MobBehavior, IDamageable
 		GD.Print("Damage taken", damage);
 	}
 
-	protected override StateMap GetWeaponStateMap()
+	// Mob1's weapon lives on a separate Weapon node, so animations route
+	// through the Weapon's own AnimationHelper rather than the mob's.
+	protected override AnimationHelper GetWeaponAnimationHelper() => Weapon?.GetAnimationHelper();
+
+	// Weapon subtree. ChooseAndPlayAttack randomly picks between slash-1 and
+	// slash-2 each swing — replacing the old state-map's weighted transitions.
+	protected override BTNode BuildWeaponTree()
 	{
-		return new StateMap(0)
-		{
-			{ State.Reset, new StateInfo([
-				new TState(State.RToSlash1Start, () => !Weapon.GetAnimationHelper().IsAnimating && IsWithinAttackRange() ? ActionScoreRoll(100) : 0),
-			], _ => Weapon.GetAnimationHelper().ResetAnimation())},
-			{ State.RToSlash1Start, new StateInfo([
-				new TState(State.Slash1, () => !Weapon.GetAnimationHelper().IsAnimating ? ActionScoreRoll(25) : 0),
-			], _ => Weapon.GetAnimationHelper().QueueAnimation("reset-to-slash-1-start"))},
-			{ State.Slash1, new StateInfo([
-				new TState(State.Slash2, () => !Weapon.GetAnimationHelper().IsAnimating ? ActionScoreRoll(80) : 0),
-				new TState(State.Reset, () => !Weapon.GetAnimationHelper().IsAnimating ? ActionScoreRoll(25) : 0),
-			], _ => Weapon.GetAnimationHelper().QueueAnimation("slash-1"))},
-			{ State.Slash2, new StateInfo([
-				new TState(State.Slash1, () => !Weapon.GetAnimationHelper().IsAnimating ? ActionScoreRoll(50) : 0),
-				new TState(State.Reset, () => !Weapon.GetAnimationHelper().IsAnimating ? ActionScoreRoll(25) : 0),
-			], _ => Weapon.GetAnimationHelper().QueueAnimation("slash-2"))}
-		};
+		return new Selector([
+			new Sequence([
+				new Condition(IsWeaponAnimPlaying),
+				new ActionNode(WaitForAnim),
+			]),
+			new Sequence([
+				new Inverter(new Condition(IsWeaponDrawn)),
+				new ActionNode(() => PlayDrawAnim("reset-to-slash-1-start")),
+			]),
+			new Sequence([
+				new Condition(IsWithinAttackRange),
+				new Condition(IsOffCooldown),
+				new ActionNode(ChooseAndPlayAttack),
+			]),
+			new ActionNode(ReadyStance),
+		]);
+	}
+
+	private NodeState ChooseAndPlayAttack()
+	{
+		var attack = ActionScoreRoll(0) > 50 ? "slash-1" : "slash-2";
+		return PlayAttack(attack);
 	}
 }

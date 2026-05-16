@@ -7,29 +7,28 @@ public class MobBlackboard
     public float    Awareness;
     public Vector2? LastKnownPlayerPos;
     public ulong    LastSeenTimeMs;
-    public ulong    StateEnterTimeMs;
-    public int      AttackBudget;
-    public ulong    RepositionUntilMs;
 
+    // Wander leash: when NowMs >= WanderUntilMs, pick a new direction.
     public Vector2 WanderDirection = Vector2.Zero;
-    public ulong WanderUntilMs;
+    public ulong   WanderUntilMs;
 
-    public int StrafeSign = 1;
+    // Strafe direction flip schedule (used while circling the player).
+    public int   StrafeSign = 1;
     public ulong StrafeUntilMs;
 
-    public ulong NowMs => Time.GetTicksMsec();
+    // Self-managed timer for the LookAround leaf: 0 = not started.
+    public ulong LookAroundStartMs;
 
-    public ulong TimeInStateMs => NowMs - StateEnterTimeMs;
+    // Weapon BT state.
+    public bool  IsWeaponDrawn;
+    public ulong NextAttackReadyMs;
+
+    public ulong NowMs           => Time.GetTicksMsec();
     public ulong TimeSinceSeenMs => NowMs - LastSeenTimeMs;
-
-    public void OnStateEntered()
-    {
-        StateEnterTimeMs = NowMs;
-    }
 
     public void OnPlayerSeen(Vector2 playerPos)
     {
         LastKnownPlayerPos = playerPos;
-        LastSeenTimeMs = NowMs;
+        LastSeenTimeMs     = NowMs;
     }
 }

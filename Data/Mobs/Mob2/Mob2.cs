@@ -1,11 +1,13 @@
-﻿using Deflector.Data.BehaviorTree;
+using Deflector.Data.BehaviorTree;
 using Deflector.Data.Shared;
 using Godot;
 
 namespace Deflector.Data.Mobs.Mob2;
 
-public partial class Mob2: MobBehavior, IDamageable
+public partial class Mob2 : MobBehavior, IDamageable
 {
+	public const string WideSlashL2R = "wide_slash_l2r";
+		
 	public override void _Ready()
 	{
 		WeaponAnimationHelper = new AnimationHelper(GetNode<AnimationPlayer>("WeaponsGroup/AnimationPlayer"), this);
@@ -19,39 +21,29 @@ public partial class Mob2: MobBehavior, IDamageable
 		GD.Print("Damage taken", damage);
 	}
 
-	private bool ReadyStance(State fromState)
-	{
-		if (fromState != State.Idle)
-		{
-			return false;
-		}
-		
-		if (WeaponState != State.Ready)
-		{
-			WeaponStateMap.SetToState(State.Ready, WeaponState);
-			WeaponState = State.Ready;
-		}
-
-		return true;
-	}
-
-	protected override BTNode BuildBehavioralTree()
+	// Weapon subtree, evaluated by Engage when the mob is in attack range.
+	//   Locked      — an animation is playing → wait it out, don't stomp it
+	//   Draw        — weapon not yet drawn    → play the draw anim once
+	//   Attack      — in range + off cooldown → swing
+	//   ReadyStance — fallback                → hold position, face the player
+	protected override BTNode BuildWeaponTree()
 	{
 		return new Selector([
-			// 1. Wary/Investigation branch
 			new Sequence([
-				new ActionNode(HasSomethingToInvestigate),
-				new ActionNode(Investigate),
-				new ActionNode(SearchAreaLookAround)
+				new Condition(IsWeaponAnimPlaying),
+				new ActionNode(WaitForAnim),
 			]),
-			// 2. MELEE COMBAT BRANCH (with 2 variations)
 			new Sequence([
-				new Selector([
-					// Variation A: Combo Chain (Only if cooldown is done)
-					new Sequence([
-					]),
-				])
+				new Inverter(new Condition(IsWeaponDrawn)),
+				new ActionNode(() => PlayDrawAnim("sword_draw_l")),
 			]),
+			// Sword attack sequence
+			new Sequence([
+				new Condition(IsWithinAttackRange),
+				new Condition(IsOffCooldown),
+				new ActionNode(() => PlayAttack("wide_slash_l2r")),
+			]),
+			new ActionNode(ReadyStance),
 		]);
 	}
 }
