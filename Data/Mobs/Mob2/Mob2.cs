@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Deflector.Data.Shared;
-using Deflector.Data.Weapons;
+﻿using Deflector.Data.Shared;
 using Godot;
 
 namespace Deflector.Data.Mobs.Mob2;
@@ -9,44 +7,15 @@ public partial class Mob2: MobBehavior, IDamageable
 {
 	public override void _Ready()
 	{
-		Weapon = GetNode<Weapon>("MobWeapon");
-		var playerNode = GetTree().GetFirstNodeInGroup("player");
-		if (playerNode is Player.Player player)
-		{
-			Init(player);
-		}
+		WeaponAnimationHelper = new AnimationHelper(GetNode<AnimationPlayer>("WeaponsGroup/AnimationPlayer"), this);
+		Init();
+		Body.Modulate = new Color(0.5f, 0.5f, 0.5f);
+		Eye.Modulate  = new Color(1.0f, 0.3f, 0.3f);
 	}
 
 	public void TakeDamage(int damage)
 	{
 		GD.Print("Damage taken", damage);
-	}
-	
-	protected override StateMap GetStateMap()
-	{
-		return new StateMap(1000)
-		{
-			{State.Idle, new StateInfo([
-				new TState(State.Wary, () => IsWithinVisibleRegion() ? 100 : 0),
-			])},
-			{State.Wary, new StateInfo([
-				new TState(State.Wary, () => ActionScoreRoll(50)),
-				new TState(State.GoingToPlayer, () => IsWithinVisibleRegion() ? ActionScoreRoll(25) : 0),
-				new TState(State.Attacking, () => IsWeaponCooldownOver() ? ActionScoreRoll(25) : 0),
-			], Enter: ReadyStance, Tick: ActWary)},
-			{State.GoingToPlayer, new StateInfo([
-				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(60) : 0),
-				new TState(State.Wary, () => ActionScoreRoll(60)),
-				new TState(State.Attacking, () => IsWeaponCooldownOver() ? ActionScoreRoll(25) : 0),
-				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
-			], Tick: GoToPlayerIfOutsideAttackRange)},
-			{State.Attacking, new StateInfo([
-				new TState(State.Attacking, () => IsWeaponCooldownOver() ? ActionScoreRoll(50) : 0),
-				new TState(State.GoingToPlayer, () => !IsWithinAttackRange() ? ActionScoreRoll(25) : 0),
-				new TState(State.Wary, () => ActionScoreRoll(50)),
-				new TState(State.Idle, () => !IsWithinDetectionRange() ? ActionScoreRoll(90) : 0),
-			], Tick: AttackPlayer, ReEval: () => !Weapon.IsAnimating && IsWeaponInReadyState())},
-		};
 	}
 
 	private bool ReadyStance(State fromState)
@@ -56,15 +25,16 @@ public partial class Mob2: MobBehavior, IDamageable
 			return false;
 		}
 		
-		if (Weapon.State != State.Ready)
+		if (WeaponState != State.Ready)
 		{
-			WeaponStateMap.SetToState(State.Ready, Weapon.State);
-			Weapon.State = State.Ready;
+			WeaponStateMap.SetToState(State.Ready, WeaponState);
+			WeaponState = State.Ready;
 		}
 
 		return true;
 	}
 	
+	/*
 	protected override StateMap GetWeaponStateMap()
 	{
 		return new StateMap(100, true)
@@ -116,5 +86,5 @@ public partial class Mob2: MobBehavior, IDamageable
 				new TState(State.Ready, () => 100),
 			], _ => QueueAnimationAndDashToPlayer("stab"), Exit: StopDash)},
 		};
-	}
+	}*/
 }

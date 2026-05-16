@@ -1,8 +1,9 @@
-[gd_scene load_steps=33 format=3 uid="uid://yp4wjw4lp8qb"]
+[gd_scene format=3 uid="uid://yp4wjw4lp8qb"]
 
-[ext_resource type="Texture2D" uid="uid://c3dbbunhymvmy" path="res://icon.svg" id="1_2y2p2"]
 [ext_resource type="Script" uid="uid://bnur6icfvqin4" path="res://Data/Player/Player.cs" id="1_633ct"]
+[ext_resource type="Texture2D" uid="uid://d1cr5p01nuy6v" path="res://assets/white-arrow-1-sprite.png" id="2_hworc"]
 [ext_resource type="Texture2D" uid="uid://eygpuvsojy61" path="res://assets/spark-1-sprites/0.png" id="2_oax0i"]
+[ext_resource type="Script" uid="uid://yb27lvxv67k" path="res://Data/Player/PlayerSprite.cs" id="3_b21lg"]
 [ext_resource type="Texture2D" uid="uid://coh88x8y72pfy" path="res://assets/spark-1-sprites/1.png" id="3_hworc"]
 [ext_resource type="Texture2D" uid="uid://cjofmo35swu13" path="res://assets/spark-1-sprites/2.png" id="4_b21lg"]
 [ext_resource type="PackedScene" uid="uid://b6t6eufj0ge8" path="res://Data/Weapons/Sword/weapon_sword.tscn" id="4_feiwi"]
@@ -30,7 +31,7 @@
 [ext_resource type="Script" uid="uid://ct8ummkvify5q" path="res://Data/Player/PlayerLootArea.cs" id="15_f3ift"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vol7m"]
-size = Vector2(131.113, 124.986)
+size = Vector2(255.26385, 255.04419)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q7845"]
 size = Vector2(57, 58)
@@ -120,28 +121,31 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_ih5kk"]
 radius = 65.0
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" unique_id=766620431 groups=["Player"]]
 script = ExtResource("1_633ct")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-rotation = 1.56411
-scale = Vector2(0.445313, 0.460938)
-texture = ExtResource("1_2y2p2")
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=80477693]
+position = Vector2(0.29729366, 0.07432167)
+rotation = -1.5707964
+scale = Vector2(0.22478639, 0.22199138)
+texture = ExtResource("2_hworc")
+script = ExtResource("3_b21lg")
 
-[node name="PlayerHurtBox" type="Area2D" parent="Sprite2D"]
+[node name="PlayerHurtBox" type="Area2D" parent="Sprite2D" unique_id=2035674110]
 script = ExtResource("14_bn7xh")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/PlayerHurtBox"]
-position = Vector2(-4.31171e-06, 4.11021e-06)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/PlayerHurtBox" unique_id=1457557282]
+position = Vector2(1.8996782, -0.90029836)
+scale = Vector2(0.9999999, 1.0000002)
 shape = SubResource("RectangleShape2D_vol7m")
 
-[node name="PlayerCollisionShape" type="CollisionShape2D" parent="."]
+[node name="PlayerCollisionShape" type="CollisionShape2D" parent="." unique_id=1549097112]
 shape = SubResource("RectangleShape2D_q7845")
 
-[node name="WeaponSword" parent="." instance=ExtResource("4_feiwi")]
+[node name="WeaponSword" parent="." unique_id=666540428 instance=ExtResource("4_feiwi")]
 
-[node name="DeflectIndicator" type="AnimatedSprite2D" parent="."]
-z_index = 1
+[node name="DeflectIndicator" type="AnimatedSprite2D" parent="." unique_id=438427473]
+z_index = 10
 position = Vector2(38, 1)
 scale = Vector2(0.7, 0.695)
 sprite_frames = SubResource("SpriteFrames_j2u4r")
@@ -149,12 +153,12 @@ animation = &"deflect"
 frame = 12
 frame_progress = 1.0
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=143789237]
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 
-[node name="PlayerLootArea" type="Area2D" parent="."]
+[node name="PlayerLootArea" type="Area2D" parent="." unique_id=30875696]
 script = ExtResource("15_f3ift")
 
-[node name="PlayerLootAreaCollisionShape" type="CollisionShape2D" parent="PlayerLootArea"]
+[node name="PlayerLootAreaCollisionShape" type="CollisionShape2D" parent="PlayerLootArea" unique_id=1827491213]
 shape = SubResource("CircleShape2D_ih5kk")

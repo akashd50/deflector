@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class TitleScreen : Control
 {
@@ -10,7 +9,7 @@ public partial class TitleScreen : Control
 		_startButton = GetNode<Button>("StartButton");
 		_startButton.Pressed += () =>
 		{
-			GetTree().ChangeSceneToFile("res://Data/level-1.tscn");
+			GetTree().ChangeSceneToFile("res://Data/BaseGameScene.tscn");
 		};
 		
 		_quitButton = GetNode<Button>("QuitButton");

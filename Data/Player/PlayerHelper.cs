@@ -101,14 +101,14 @@ public class PlayerHelper(Player player)
 		{
 			if (player.Weapon.State == State.Slash2 || player.Weapon.State == State.Reset)
 			{
-				player.Weapon.QueueAnimation("slash-1", () =>
+				player.Weapon.GetAnimationHelper().QueueAnimation("slash-1", () =>
 				{
 					player.Weapon.State = State.Slash1;
 					return true;
 				});
 			} else if (player.Weapon.State == State.Slash1)
 			{
-				player.Weapon.QueueAnimation("slash-2", () =>
+				player.Weapon.GetAnimationHelper().QueueAnimation("slash-2", () =>
 				{
 					player.Weapon.State = State.Slash2;
 					return true;
@@ -124,7 +124,7 @@ public class PlayerHelper(Player player)
 	{
 		_isDeflecting = true;
 		_deflectStarted = Time.GetTicksMsec();
-		player.Weapon.QueueAnimation("start-blocking", () =>
+		player.Weapon.GetAnimationHelper().QueueAnimation("start-blocking", () =>
 		{
 			if (!Input.IsActionPressed("deflect"))
 			{
@@ -136,7 +136,7 @@ public class PlayerHelper(Player player)
 
 	private void StopBlocking()
 	{
-		player.Weapon.QueueAnimation("stop-blocking", () =>
+		player.Weapon.GetAnimationHelper().QueueAnimation("stop-blocking", () =>
 		{
 			_isDeflecting = false;
 			return true;

@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://b00wvsemr0cni"]
+
+[ext_resource type="Texture2D" uid="uid://b4cctjss17b1" path="res://assets/white-sprite.png" id="1_04seh"]
+[ext_resource type="Script" uid="uid://46lsxo1ma2fc" path="res://Data/BaseGameScene.cs" id="1_on5um"]
+[ext_resource type="PackedScene" uid="uid://dcvj4odjpd46r" path="res://Data/combat_ui.tscn" id="3_4mgvq"]
+[ext_resource type="PackedScene" uid="uid://cxb7ips71us1g" path="res://Data/LootableItem/lootable_item.tscn" id="4_on5um"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_mlt5t"]
+
+[sub_resource type="Compositor" id="Compositor_04seh"]
+
+[node name="Node2D" type="Node2D" unique_id=921415049]
+script = ExtResource("1_on5um")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=740927065]
+camera_attributes = SubResource("CameraAttributesPractical_mlt5t")
+compositor = SubResource("Compositor_04seh")
+
+[node name="WorldBackground" type="Sprite2D" parent="." unique_id=823311380]
+scale = Vector2(5, 5)
+texture = ExtResource("1_04seh")
+
+[node name="WorldItems" type="Node2D" parent="." unique_id=2051968020]
+
+[node name="LootableItem" parent="WorldItems" unique_id=903534829 instance=ExtResource("4_on5um")]
+position = Vector2(214, 265)
+
+[node name="CombatUI" parent="." unique_id=1917449253 instance=ExtResource("3_4mgvq")]

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 
 namespace Deflector.Data.Shared;
@@ -73,33 +72,26 @@ public class StateMap : Dictionary<State, StateInfo>
 		newState = State.Null;
 
 		var stateScores = GetStateScores(stateInfo);
-		switch (stateScores.Values.Count)
+		if (stateScores.Count == 0)
 		{
-			case > 1:
-			{
-				var bestState = GetHighestRankedState(stateScores);
-				newState = bestState;
-				if (newState != lastState)
-				{
-					stateInfo.Exit?.Invoke();
-					this[newState].Enter?.Invoke(lastState);
-				}
-			   
-				break;
-			}
-			case 1:
-				newState = stateScores.Keys.First();
-				if (newState != lastState)
-				{
-					stateInfo.Exit?.Invoke();
-					this[newState].Enter?.Invoke(lastState);
-				}
-				break;
+			return false;
 		}
-		
-		return newState != State.Null;
+
+		var bestState = GetHighestRankedState(stateScores);
+		if (bestState == State.Null)
+		{
+			return false;
+		}
+
+		newState = bestState;
+		if (newState != lastState)
+		{
+			stateInfo.Exit?.Invoke();
+			this[newState].Enter?.Invoke(lastState);
+		}
+		return true;
 	}
-	
+
 	private static Dictionary<State, int> GetStateScores(StateInfo stateInfo)
 	{
 		var stateScores = new Dictionary<State, int>();
@@ -110,13 +102,17 @@ public class StateMap : Dictionary<State, StateInfo>
 		return stateScores;
 	}
 
+	// Picks the highest-scoring transition. A score of 0 means "do not consider",
+	// so when every candidate scores 0 we return Null to signal "stay put".
+	// Strict > favors the first-iterated state on ties, which is stable and
+	// lets callers express priority via insertion order.
 	private static State GetHighestRankedState(Dictionary<State, int> stateScores)
 	{
 		var maxScore = 0;
 		var highestRankedState = State.Null;
 		foreach (var stateScore in stateScores)
 		{
-			if (stateScore.Value >= maxScore)
+			if (stateScore.Value > maxScore)
 			{
 				maxScore = stateScore.Value;
 				highestRankedState = stateScore.Key;

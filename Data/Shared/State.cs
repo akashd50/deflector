@@ -5,8 +5,10 @@ public enum State
     Idle = 0,
     Null,
     Wary,
+    Investigate,
     GoingToPlayer,
     Attacking,
+    Reposition,
     
     Reset,
     Ready,
