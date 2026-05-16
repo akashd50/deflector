@@ -11,8 +11,6 @@ public class PlayerHelper(Player player)
 	public Vector2 Position;
 	public float Rotation;
 	
-	private int speed = 100;
-	
 	private const int DashDuration = 150;
 	private bool _isDashing = false;
 	private ulong _dashStarted = 0;
@@ -46,7 +44,7 @@ public class PlayerHelper(Player player)
 			}
 
 			_dashStarted = Time.GetTicksMsec();
-			Velocity = _walkDirection * (speed * 12);
+			Velocity = _walkDirection * (player.Speed * 12);
 			return true;
 		}
 		
@@ -229,15 +227,15 @@ public class PlayerHelper(Player player)
 	{
 		if (_isDeflecting)
 		{
-			Velocity = _walkDirection * speed/3;
+			Velocity = _walkDirection * player.Speed/3;
 		}
 		else if (player.Weapon.IsAttacking)
 		{
-			Velocity = _walkDirection * speed/10;
+			Velocity = _walkDirection * player.Speed/10;
 		}
 		else
 		{
-			Velocity = _walkDirection * speed;
+			Velocity = _walkDirection * player.Speed;
 		}
 	}
 

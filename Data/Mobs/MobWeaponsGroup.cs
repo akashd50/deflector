@@ -35,6 +35,12 @@ public partial class MobWeaponsGroup: Node2D
 
 		return false;
 	}
+	
+	public bool IsPlayerInRange(string weaponId, Player.Player player)
+	{
+		var weapon = Weapons.FirstOrDefault(w => w.WeaponId == weaponId);
+		return weapon != null && weapon.MobAttackRange.IsInRange(player);
+	}
 
 	public double GetRandomWeaponRange()
 	{

@@ -33,6 +33,19 @@ public partial class Mob2 : MobBehavior, IDamageable
 				new Condition(IsWeaponAnimPlaying),
 				new ActionNode(WaitForAnim),
 			]),
+			// Weapon selection from range sequence
+			new Sequence([
+				new Condition(() => Blackboard.CurrentWeaponSelection == "Sword"),
+				new Sequence([
+					new Inverter(new Condition(IsWeaponDrawn)),
+					new ActionNode(() => PlayDrawAnim("sword_draw_l")),
+					new ActionNode(() =>
+					{
+						Blackboard.CurrentWeaponSelection = null;
+						return PlayAttack("wide_slash_l2r");
+					}),
+				]),
+			]),
 			new Sequence([
 				new Inverter(new Condition(IsWeaponDrawn)),
 				new ActionNode(() => PlayDrawAnim("sword_draw_l")),
@@ -42,6 +55,7 @@ public partial class Mob2 : MobBehavior, IDamageable
 				new Condition(IsWithinAttackRange),
 				new Condition(IsOffCooldown),
 				new ActionNode(() => PlayAttack("wide_slash_l2r")),
+				new ActionNode(() => PlayAttack("sword_reset", () => Blackboard.IsWeaponDrawn = false)),
 			]),
 			new ActionNode(ReadyStance),
 		]);

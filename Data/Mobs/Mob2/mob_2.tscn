@@ -252,6 +252,7 @@ script = ExtResource("5_sovvy")
 
 [node name="SwordGroup" type="Node2D" parent="WeaponsGroup" unique_id=1634544471]
 script = ExtResource("5_1pfuy")
+WeaponId = "Sword"
 
 [node name="Sword" type="Node2D" parent="WeaponsGroup/SwordGroup" unique_id=379112992]
 position = Vector2(-36, 0)

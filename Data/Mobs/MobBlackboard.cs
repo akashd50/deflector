@@ -23,6 +23,9 @@ public class MobBlackboard
     public bool  IsWeaponDrawn;
     public ulong NextAttackReadyMs;
 
+    public string? CurrentWeaponSelection;
+    public ulong LastWeaponSelectionTimeMs;
+
     public ulong NowMs           => Time.GetTicksMsec();
     public ulong TimeSinceSeenMs => NowMs - LastSeenTimeMs;
 

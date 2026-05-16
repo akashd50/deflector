@@ -14,7 +14,7 @@ public partial class MobBehavior : CharacterBody2D, IUsesAnimationHelper
 
 	// --- Movement ---
 	[Export] public int WalkSpeed            = 30;
-	[Export] public int RunSpeed             = 100;
+	[Export] public int RunSpeed             = 200;
 	[Export] public int DashSpeed            = 1200;
 	[Export] public int RotationSpeed        = 3;
 	[Export] public int PreferredCombatRange = 110;
@@ -36,6 +36,7 @@ public partial class MobBehavior : CharacterBody2D, IUsesAnimationHelper
 	// --- Investigate ---
 	[Export] public int InvestigateArriveDist   = 24;
 	[Export] public int InvestigateLookAroundMs = 1200;
+	[Export] public int DistanceWeaponSelectApproachMs = 5000;
 
 	protected Vector2         WalkDirection = Vector2.Zero;
 	protected Vector2         FaceDirection = Vector2.Zero;
@@ -105,7 +106,16 @@ public partial class MobBehavior : CharacterBody2D, IUsesAnimationHelper
 			new Sequence([
 				new Condition(IsAware),
 				new Condition(IsPlayerVisible),
-				// new Condition(IsWithinAttackRange),
+				new Selector([
+					new Sequence([
+						new Inverter(new Condition(IsCloseToPlayer)),
+						new Condition(SelectAWeaponForAttack),
+						new Condition(IsWithinSelectedAttackRange),
+					]),
+					new Sequence([
+						new Condition(IsCloseToPlayer)
+					])
+				]),
 				new ActionNode(Engage),
 			]),
 			new Sequence([
@@ -191,6 +201,35 @@ public partial class MobBehavior : CharacterBody2D, IUsesAnimationHelper
 		if (player == null || MobWeaponsGroup == null) return false;
 		return MobWeaponsGroup.IsPlayerInRange(player);
 	}
+	
+	public bool IsWithinSelectedAttackRange()
+	{
+		var player = TryGetPlayer();
+		if (player == null || MobWeaponsGroup == null || Blackboard.CurrentWeaponSelection == null)
+		{
+			return false;
+		}
+		return MobWeaponsGroup.IsPlayerInRange(Blackboard.CurrentWeaponSelection, player);
+	}
+
+	public bool SelectAWeaponForAttack()
+	{
+		if (MobWeaponsGroup == null || MobWeaponsGroup.Weapons.Count == 0)
+		{
+			return false;
+		}
+
+		if (Blackboard.NowMs - Blackboard.LastWeaponSelectionTimeMs < (ulong)DistanceWeaponSelectApproachMs && Blackboard.CurrentWeaponSelection != null)
+		{
+			return true;
+		}
+		
+		Blackboard.CurrentWeaponSelection = MobWeaponsGroup.Weapons[_random.Next(0, MobWeaponsGroup.Weapons.Count)].WeaponId;
+		Blackboard.LastWeaponSelectionTimeMs = Blackboard.NowMs;
+		return true;
+	}
+
+	public virtual bool IsCloseToPlayer() => ToPlayer().Length() < 150;
 
 	// Weapon BT predicates.
 	protected bool IsWeaponAnimPlaying() => GetWeaponAnimationHelper()?.IsAnimating ?? false;
@@ -248,7 +287,7 @@ public partial class MobBehavior : CharacterBody2D, IUsesAnimationHelper
 		if (player == null) return NodeState.Failure;
 
 		TrackTowardsPlayer();
-		ApproachToRange(player.GlobalPosition, (int)MobWeaponsGroup.GetRandomWeaponRange(), RunSpeed);
+		ApproachToRange(player.GlobalPosition, 100, RunSpeed);
 		return NodeState.Running;
 	}
 
@@ -299,12 +338,12 @@ public partial class MobBehavior : CharacterBody2D, IUsesAnimationHelper
 	// Queues an attack animation. Cooldown gating is the caller's responsibility
 	// (via a Condition(IsOffCooldown) in front) — the actual cooldown timer is
 	// armed by OnHitDone / future fairness logic.
-	protected NodeState PlayAttack(string animName)
+	protected NodeState PlayAttack(string animName, Func<bool>? onDone = null)
 	{
 		var helper = GetWeaponAnimationHelper();
 		if (helper == null)     return NodeState.Failure;
 		if (helper.IsAnimating) return NodeState.Running;
-		helper.QueueAnimation(animName);
+		helper.QueueAnimation(animName, onDone);
 		return NodeState.Running;
 	}
 

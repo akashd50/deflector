@@ -17,7 +17,7 @@ camera_attributes = SubResource("CameraAttributesPractical_mlt5t")
 compositor = SubResource("Compositor_04seh")
 
 [node name="WorldBackground" type="Sprite2D" parent="." unique_id=823311380]
-scale = Vector2(5, 5)
+scale = Vector2(100, 100)
 texture = ExtResource("1_04seh")
 
 [node name="WorldItems" type="Node2D" parent="." unique_id=2051968020]

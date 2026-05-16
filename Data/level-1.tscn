@@ -5,8 +5,7 @@
 
 [node name="Node2D" type="Node2D" unique_id=72472835]
 
-[node name="Player" parent="." unique_id=1301579179 groups=["Player"] instance=ExtResource("4_jviqg")]
+[node name="Player" parent="." unique_id=1301579179 instance=ExtResource("4_jviqg")]
 position = Vector2(531, 371)
 
-[node name="Mob2" parent="." unique_id=1083115184 instance=ExtResource("7_ugwh4")]
-position = Vector2(531, 123)
+[node name="Mob2" parent="." unique_id=44988803 instance=ExtResource("7_ugwh4")]
